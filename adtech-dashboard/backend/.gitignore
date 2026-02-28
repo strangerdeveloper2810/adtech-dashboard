@@ -1,0 +1,24 @@
+# Build output
+bin/
+tmp/
+*.exe
+*.out
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Test
+*.test
+coverage.out
+coverage.html
+
+# Go
+vendor/
+
+# Air (hot reload)
+.air.toml
+
+# OS
+.DS_Store

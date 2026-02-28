@@ -1,4 +1,7 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router';
+import { useGetCampaignsQuery } from '../../features/campaigns/campaignApi';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import {
   Box,
   Typography,
@@ -20,18 +23,8 @@ import {
 import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import { useNavigate } from 'react-router';
-import { useGetCampaignsQuery } from '../features/campaigns/campaignApi';
-import { useDocumentTitle } from '../hooks/useDocumentTitle';
-import type { CampaignStatus } from '../types';
-
-const statusColors: Record<CampaignStatus, 'default' | 'success' | 'warning' | 'error' | 'info'> = {
-  draft: 'default',
-  active: 'success',
-  paused: 'warning',
-  completed: 'info',
-  archived: 'error',
-};
+import { CAMPAIGN_STATUS_COLORS, ROUTES } from '../../constants';
+import { formatCurrency } from '../../utils/format';
 
 export default function CampaignsPage() {
   useDocumentTitle('Campaigns');
@@ -56,7 +49,7 @@ export default function CampaignsPage() {
         <Button
           variant="contained"
           startIcon={<AddIcon />}
-          onClick={() => navigate('/campaigns/new')}
+          onClick={() => navigate(ROUTES.CAMPAIGN_NEW)}
         >
           New Campaign
         </Button>
@@ -114,15 +107,15 @@ export default function CampaignsPage() {
                       <TableCell>
                         <Chip
                           label={campaign.status}
-                          color={statusColors[campaign.status]}
+                          color={CAMPAIGN_STATUS_COLORS[campaign.status]}
                           size="small"
                         />
                       </TableCell>
                       <TableCell align="right">
-                        ${campaign.budget.toLocaleString()}
+                        {formatCurrency(campaign.budget)}
                       </TableCell>
                       <TableCell align="right">
-                        ${campaign.spent.toLocaleString()}
+                        {formatCurrency(campaign.spent)}
                       </TableCell>
                       <TableCell>{campaign.start_date}</TableCell>
                       <TableCell>{campaign.end_date}</TableCell>

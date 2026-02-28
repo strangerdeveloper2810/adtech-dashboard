@@ -1,13 +1,6 @@
-import type { ReactNode } from 'react';
 import { Box, Typography } from '@mui/material';
 import InboxIcon from '@mui/icons-material/Inbox';
-
-interface EmptyStateProps {
-  icon?: ReactNode;
-  title?: string;
-  description?: string;
-  action?: ReactNode;
-}
+import type { EmptyStateProps } from '../../../types';
 
 export function EmptyState({
   icon = <InboxIcon sx={{ fontSize: 64 }} />,

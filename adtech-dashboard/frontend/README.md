@@ -8,7 +8,7 @@ React 19 + TypeScript SPA for managing advertising campaigns with real-time anal
 |----------|-----------|
 | Framework | React 19, TypeScript 5.9 (strict) |
 | Build | Rsbuild (Rust-based) |
-| State | Redux Toolkit + RTK Query, Zustand (UI) |
+| State | Redux Toolkit + RTK Query, Zustand (UI + Toast) |
 | Routing | React Router v7 (lazy-loaded) |
 | UI | MUI v7 + Emotion, custom design system |
 | Charts | ECharts + D3.js |
@@ -36,39 +36,62 @@ pnpm build
 
 ```
 src/
-├── app/                      # App configuration
-│   ├── router.tsx            # Route definitions (lazy-loaded)
-│   ├── store.ts              # Redux store setup
-│   ├── hooks.ts              # Typed useAppDispatch / useAppSelector
-│   └── theme/                # MUI theme (atomic files)
+├── app/                          # App configuration
+│   ├── router.tsx                # Route definitions (lazy-loaded)
+│   ├── store.ts                  # Redux store setup
+│   ├── hooks.ts                  # Typed useAppDispatch / useAppSelector
+│   └── theme/                    # MUI theme (atomic files)
 │       ├── palette.ts
 │       ├── typography.ts
 │       ├── shadows.ts
-│       ├── components/       # Component overrides (25+ MUI components)
+│       ├── components/           # Component overrides (25+ MUI components)
 │       └── index.ts
 ├── components/
-│   ├── layout/               # MainLayout, Header, Sidebar, ProtectedRoute
-│   └── ui/                   # Design system (barrel export via index.ts)
-│       ├── data-display/     # DataTable, StatCard, StatusChip, ChartCard
-│       ├── feedback/         # ErrorBoundary, ErrorState, LoadingState, EmptyState, LazyPage
-│       ├── form/             # FormField, SelectField, SearchInput
-│       ├── layout/           # PageContainer, PageHeader
-│       ├── navigation/       # Pagination
-│       ├── overlay/          # ConfirmDialog
-│       └── typography/       # PageTitle, SectionTitle, TextMuted, Label, StatValue
-├── constants/                # Centralized constants
-│   ├── routes.ts             # Route paths
-│   ├── api.ts                # API endpoints, timeout
-│   └── app.ts                # App name, drawer width, pagination, labels
+│   ├── layout/                   # App layout (barrel index.ts)
+│   │   ├── navigation/           # Header, Sidebar
+│   │   └── wrappers/             # MainLayout, ProtectedRoute
+│   └── ui/                       # Design system (barrel index.ts)
+│       ├── data-display/         # DataTable, StatCard, StatusChip, ChartCard
+│       ├── feedback/             # ErrorBoundary, ErrorState, LoadingState, EmptyState, LazyPage, ToastContainer
+│       ├── form/                 # FormField, SelectField, SearchInput
+│       ├── layout/               # PageContainer, PageHeader
+│       ├── navigation/           # Pagination
+│       ├── overlay/              # ConfirmDialog
+│       └── typography/           # PageTitle, SectionTitle, TextMuted, Label, StatValue
+├── constants/                    # Centralized constants
+│   ├── routes.ts                 # Route paths
+│   ├── api.ts                    # API endpoints, timeout
+│   └── app.ts                    # App name, drawer width, status colors
 ├── features/
-│   ├── auth/                 # authSlice + authApi (login, register, refresh)
-│   └── campaigns/            # campaignApi (CRUD + RTK Query cache)
-├── hooks/                    # useDocumentTitle, ...
-├── pages/                    # Route pages (lazy-loaded)
-├── store/                    # Zustand stores (uiStore — sidebar toggle)
-├── types/                    # Shared TypeScript interfaces
-└── utils/                    # Axios instance (interceptors, JWT attach)
+│   ├── auth/                     # authSlice + authApi (login, register, refresh)
+│   └── campaigns/                # campaignApi (CRUD + RTK Query cache)
+├── hooks/                        # useDocumentTitle, ...
+├── pages/                        # Route pages (lazy-loaded, organized by domain)
+│   ├── auth/                     # LoginPage, RegisterPage
+│   ├── dashboard/                # DashboardPage
+│   ├── campaigns/                # CampaignsPage
+│   │   └── children/             # CampaignNewPage, CampaignDetailPage
+│   └── errors/                   # NotFoundPage
+├── store/                        # Zustand stores (uiStore, toastStore)
+├── types/                        # Centralized TypeScript types (NO inline types)
+│   ├── domain/                   # user, auth, campaign, ad
+│   ├── api/                      # ApiResponse, PaginatedResponse, ApiError
+│   ├── store/                    # AuthState, UIState, Toast, ToastStore
+│   ├── component/                # All component props (by category)
+│   └── index.ts                  # Barrel re-export
+└── utils/                        # Shared utilities
+    ├── axios.ts                  # Axios instance (JWT interceptors)
+    ├── format.ts                 # formatCurrency, formatDate, getInitial
+    └── storage.ts                # localStorage abstraction
 ```
+
+## Code Conventions
+
+- **Import order**: hooks → UI components → Icons → helpers/constants → types
+- **No inline types**: All interfaces/types live in `src/types/`, organized by category
+- **Shared logic**: Helper functions in `src/utils/`, constants in `src/constants/`
+- **Component purity**: Components contain only UI + component-specific logic
+- **Page organization**: Grouped by domain; child pages go in `children/` folder
 
 ## Routes
 

@@ -1,5 +1,5 @@
 import { Chip, type ChipProps } from '@mui/material';
-import type { CampaignStatus } from '../../../types';
+import type { CampaignStatus, StatusChipProps } from '../../../types';
 
 const statusConfig: Record<CampaignStatus, { color: ChipProps['color']; label: string }> = {
   draft: { color: 'default', label: 'Draft' },
@@ -8,11 +8,6 @@ const statusConfig: Record<CampaignStatus, { color: ChipProps['color']; label: s
   completed: { color: 'info', label: 'Completed' },
   archived: { color: 'error', label: 'Archived' },
 };
-
-interface StatusChipProps {
-  status: CampaignStatus;
-  size?: ChipProps['size'];
-}
 
 export function StatusChip({ status, size = 'small' }: StatusChipProps) {
   const config = statusConfig[status];

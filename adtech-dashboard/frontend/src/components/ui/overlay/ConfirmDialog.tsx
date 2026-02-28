@@ -6,18 +6,7 @@ import {
   DialogActions,
   Button,
 } from '@mui/material';
-
-interface ConfirmDialogProps {
-  open: boolean;
-  title: string;
-  message: string;
-  confirmText?: string;
-  cancelText?: string;
-  severity?: 'error' | 'warning' | 'info';
-  loading?: boolean;
-  onConfirm: () => void;
-  onCancel: () => void;
-}
+import type { ConfirmDialogProps } from '../../../types';
 
 export function ConfirmDialog({
   open,

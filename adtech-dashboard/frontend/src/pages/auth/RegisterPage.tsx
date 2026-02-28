@@ -1,4 +1,9 @@
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { useNavigate } from 'react-router';
+import { useRegisterMutation } from '../../features/auth/authApi';
+import { useAppDispatch } from '../../app/hooks';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import {
   Box,
   Card,
@@ -9,31 +14,29 @@ import {
   Link,
   Alert,
 } from '@mui/material';
-import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
-import { useLoginMutation } from '../features/auth/authApi';
-import { useAppDispatch } from '../app/hooks';
-import { setCredentials } from '../features/auth/authSlice';
-import { useDocumentTitle } from '../hooks/useDocumentTitle';
-import type { LoginRequest } from '../types';
+import { setCredentials } from '../../features/auth/authSlice';
+import { toast } from '../../store/toastStore';
+import type { RegisterRequest } from '../../types';
 
-export default function LoginPage() {
-  useDocumentTitle('Sign In');
+export default function RegisterPage() {
+  useDocumentTitle('Create Account');
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [login, { isLoading }] = useLoginMutation();
+  const [registerUser, { isLoading }] = useRegisterMutation();
   const [error, setError] = useState('');
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginRequest>();
+  const { register, handleSubmit, formState: { errors } } = useForm<RegisterRequest>();
 
-  const onSubmit = async (data: LoginRequest) => {
+  const onSubmit = async (data: RegisterRequest) => {
     try {
       setError('');
-      const result = await login(data).unwrap();
+      const result = await registerUser(data).unwrap();
       dispatch(setCredentials(result.data));
+      toast.success('Account created successfully!');
       navigate('/dashboard');
     } catch {
-      setError('Invalid email or password');
+      setError('Registration failed. Email may already exist.');
+      toast.error('Registration failed');
     }
   };
 
@@ -50,12 +53,20 @@ export default function LoginPage() {
       <Card sx={{ width: 400, p: 2 }}>
         <CardContent>
           <Typography variant="h5" textAlign="center" mb={3}>
-            AdTech Dashboard
+            Create Account
           </Typography>
 
           {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
 
           <form onSubmit={handleSubmit(onSubmit)}>
+            <TextField
+              fullWidth
+              label="Full Name"
+              margin="normal"
+              {...register('name', { required: 'Full name is required' })}
+              error={!!errors.name}
+              helperText={errors.name?.message}
+            />
             <TextField
               fullWidth
               label="Email"
@@ -69,7 +80,10 @@ export default function LoginPage() {
               label="Password"
               type="password"
               margin="normal"
-              {...register('password', { required: 'Password is required' })}
+              {...register('password', {
+                required: 'Password is required',
+                minLength: { value: 8, message: 'At least 8 characters' },
+              })}
               error={!!errors.password}
               helperText={errors.password?.message}
             />
@@ -81,14 +95,14 @@ export default function LoginPage() {
               disabled={isLoading}
               sx={{ mt: 2 }}
             >
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? 'Creating...' : 'Create Account'}
             </Button>
           </form>
 
           <Typography textAlign="center" mt={2} variant="body2">
-            Don't have an account?{' '}
-            <Link href="/register" underline="hover">
-              Register
+            Already have an account?{' '}
+            <Link href="/login" underline="hover">
+              Sign In
             </Link>
           </Typography>
         </CardContent>

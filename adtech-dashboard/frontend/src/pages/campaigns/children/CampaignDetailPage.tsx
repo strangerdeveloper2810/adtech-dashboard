@@ -1,7 +1,7 @@
 import { useParams } from 'react-router';
+import { useDocumentTitle } from '../../../hooks/useDocumentTitle';
 import { Typography } from '@mui/material';
-import { PageHeader } from '../components/ui';
-import { useDocumentTitle } from '../hooks/useDocumentTitle';
+import { PageHeader } from '../../../components/ui';
 
 export default function CampaignDetailPage() {
   const { id } = useParams<{ id: string }>();

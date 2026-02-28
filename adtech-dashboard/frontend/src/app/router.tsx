@@ -1,17 +1,20 @@
-import { createBrowserRouter, Navigate } from 'react-router';
-import { lazy } from 'react';
-import MainLayout from '../components/layout/MainLayout';
-import ProtectedRoute from '../components/layout/ProtectedRoute';
-import { LazyPage } from '../components/ui';
-import { ROUTES } from '../constants';
+import { createBrowserRouter, Navigate } from "react-router";
+import { lazy } from "react";
+import { MainLayout, ProtectedRoute } from "../components/layout";
+import { LazyPage } from "../components/ui";
+import { ROUTES } from "../constants";
 
-const LoginPage = lazy(() => import('../pages/LoginPage'));
-const RegisterPage = lazy(() => import('../pages/RegisterPage'));
-const DashboardPage = lazy(() => import('../pages/DashboardPage'));
-const CampaignsPage = lazy(() => import('../pages/CampaignsPage'));
-const CampaignNewPage = lazy(() => import('../pages/CampaignNewPage'));
-const CampaignDetailPage = lazy(() => import('../pages/CampaignDetailPage'));
-const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
+const LoginPage = lazy(() => import("../pages/auth/LoginPage"));
+const RegisterPage = lazy(() => import("../pages/auth/RegisterPage"));
+const DashboardPage = lazy(() => import("../pages/dashboard/DashboardPage"));
+const CampaignsPage = lazy(() => import("../pages/campaigns/CampaignsPage"));
+const CampaignNewPage = lazy(
+  () => import("../pages/campaigns/children/CampaignNewPage"),
+);
+const CampaignDetailPage = lazy(
+  () => import("../pages/campaigns/children/CampaignDetailPage"),
+);
+const NotFoundPage = lazy(() => import("../pages/errors/NotFoundPage"));
 
 export const router = createBrowserRouter([
   {
@@ -69,7 +72,7 @@ export const router = createBrowserRouter([
             ),
           },
           {
-            path: '*',
+            path: "*",
             element: (
               <LazyPage>
                 <NotFoundPage />
@@ -81,7 +84,7 @@ export const router = createBrowserRouter([
     ],
   },
   {
-    path: '/',
+    path: "/",
     element: <Navigate to={ROUTES.DASHBOARD} replace />,
   },
 ]);

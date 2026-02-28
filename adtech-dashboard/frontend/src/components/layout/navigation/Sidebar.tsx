@@ -1,3 +1,6 @@
+import { useNavigate, useLocation } from "react-router";
+import { useAppSelector } from "../../../app/hooks";
+import { useUIStore } from "../../../store/uiStore";
 import {
   Drawer,
   List,
@@ -6,22 +9,19 @@ import {
   ListItemText,
   Toolbar,
   Divider,
-} from '@mui/material';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import CampaignIcon from '@mui/icons-material/Campaign';
-import PeopleIcon from '@mui/icons-material/People';
-import { useNavigate, useLocation } from 'react-router';
-import { useAppSelector } from '../../app/hooks';
-import { useUIStore } from '../../store/uiStore';
-import { DRAWER_WIDTH, ROUTES } from '../../constants';
+} from "@mui/material";
+import DashboardIcon from "@mui/icons-material/Dashboard";
+import CampaignIcon from "@mui/icons-material/Campaign";
+import PeopleIcon from "@mui/icons-material/People";
+import { DRAWER_WIDTH, ROUTES } from "../../../constants";
 
 const menuItems = [
-  { text: 'Dashboard', icon: <DashboardIcon />, path: ROUTES.DASHBOARD },
-  { text: 'Campaigns', icon: <CampaignIcon />, path: ROUTES.CAMPAIGNS },
+  { text: "Dashboard", icon: <DashboardIcon />, path: ROUTES.DASHBOARD },
+  { text: "Campaigns", icon: <CampaignIcon />, path: ROUTES.CAMPAIGNS },
 ];
 
 const adminItems = [
-  { text: 'Users', icon: <PeopleIcon />, path: ROUTES.ADMIN_USERS },
+  { text: "Users", icon: <PeopleIcon />, path: ROUTES.ADMIN_USERS },
 ];
 
 export default function Sidebar() {
@@ -37,17 +37,17 @@ export default function Sidebar() {
         width: sidebarOpen ? DRAWER_WIDTH : 0,
         flexShrink: 0,
         transition: (theme) =>
-          theme.transitions.create('width', {
+          theme.transitions.create("width", {
             easing: theme.transitions.easing.sharp,
             duration: theme.transitions.duration.enteringScreen,
           }),
-        '& .MuiDrawer-paper': {
+        "& .MuiDrawer-paper": {
           width: DRAWER_WIDTH,
-          boxSizing: 'border-box',
-          overflowX: 'hidden',
-          transform: sidebarOpen ? 'none' : `translateX(-${DRAWER_WIDTH}px)`,
+          boxSizing: "border-box",
+          overflowX: "hidden",
+          transform: sidebarOpen ? "none" : `translateX(-${DRAWER_WIDTH}px)`,
           transition: (theme) =>
-            theme.transitions.create('transform', {
+            theme.transitions.create("transform", {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.enteringScreen,
             }),
@@ -68,7 +68,7 @@ export default function Sidebar() {
         ))}
       </List>
 
-      {user?.role === 'admin' && (
+      {user?.role === "admin" && (
         <>
           <Divider />
           <List>

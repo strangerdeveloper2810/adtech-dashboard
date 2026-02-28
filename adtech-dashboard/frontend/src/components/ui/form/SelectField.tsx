@@ -1,14 +1,5 @@
-import { TextField, MenuItem, type TextFieldProps } from '@mui/material';
-
-interface SelectOption {
-  value: string;
-  label: string;
-}
-
-type SelectFieldProps = Omit<TextFieldProps, 'select'> & {
-  options: SelectOption[];
-  placeholder?: string;
-};
+import { TextField, MenuItem } from '@mui/material';
+import type { SelectFieldProps } from '../../../types';
 
 export function SelectField({ options, placeholder, ...props }: SelectFieldProps) {
   return (

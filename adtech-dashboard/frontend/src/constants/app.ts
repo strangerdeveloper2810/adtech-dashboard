@@ -22,6 +22,14 @@ export const CAMPAIGN_STATUS_LABELS = {
   archived: 'Archived',
 } as const;
 
+export const CAMPAIGN_STATUS_COLORS = {
+  draft: 'default',
+  active: 'success',
+  paused: 'warning',
+  completed: 'info',
+  archived: 'error',
+} as const;
+
 export const AD_TYPE_LABELS = {
   banner: 'Banner',
   native: 'Native',

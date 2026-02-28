@@ -1,16 +1,8 @@
 import { useState, useEffect } from 'react';
-import { TextField, InputAdornment } from '@mui/material';
+import { TextField, InputAdornment, IconButton } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import ClearIcon from '@mui/icons-material/Clear';
-import IconButton from '@mui/material/IconButton';
-
-interface SearchInputProps {
-  value: string;
-  onChange: (value: string) => void;
-  placeholder?: string;
-  debounceMs?: number;
-  width?: number | string;
-}
+import type { SearchInputProps } from '../../../types';
 
 export function SearchInput({
   value: externalValue,

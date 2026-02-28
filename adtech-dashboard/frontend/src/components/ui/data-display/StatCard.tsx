@@ -1,14 +1,6 @@
-import type { ReactNode } from 'react';
 import { Card, CardContent, Box, Stack } from '@mui/material';
 import { Label, StatValue } from '../typography/Text';
-
-interface StatCardProps {
-  label: string;
-  value: string | number;
-  icon?: ReactNode;
-  color?: string;
-  trend?: { value: number; label: string };
-}
+import type { StatCardProps } from '../../../types';
 
 export function StatCard({ label, value, icon, color = '#1976d2', trend }: StatCardProps) {
   return (

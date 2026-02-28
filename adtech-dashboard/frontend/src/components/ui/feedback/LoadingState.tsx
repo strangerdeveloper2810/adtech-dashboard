@@ -1,9 +1,5 @@
 import { Box, CircularProgress, Typography, Skeleton, Stack } from '@mui/material';
-
-interface LoadingStateProps {
-  message?: string;
-  fullPage?: boolean;
-}
+import type { LoadingStateProps, TableSkeletonProps } from '../../../types';
 
 export function LoadingState({ message = 'Loading...', fullPage = false }: LoadingStateProps) {
   return (
@@ -21,12 +17,6 @@ export function LoadingState({ message = 'Loading...', fullPage = false }: Loadi
       </Typography>
     </Box>
   );
-}
-
-// Table skeleton loader
-interface TableSkeletonProps {
-  rows?: number;
-  columns?: number;
 }
 
 export function TableSkeleton({ rows = 5, columns = 4 }: TableSkeletonProps) {

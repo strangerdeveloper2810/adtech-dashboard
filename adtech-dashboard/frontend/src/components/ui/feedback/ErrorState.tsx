@@ -1,12 +1,5 @@
-import type { ReactNode } from 'react';
 import { Alert, AlertTitle, Box, Button } from '@mui/material';
-
-interface ErrorStateProps {
-  title?: string;
-  message?: string;
-  onRetry?: () => void;
-  action?: ReactNode;
-}
+import type { ErrorStateProps } from '../../../types';
 
 export function ErrorState({
   title = 'Something went wrong',

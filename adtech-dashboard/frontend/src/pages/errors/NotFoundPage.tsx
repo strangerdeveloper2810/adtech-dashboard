@@ -1,7 +1,7 @@
-import { Box, Button, Typography } from '@mui/material';
 import { useNavigate } from 'react-router';
-import { useDocumentTitle } from '../hooks/useDocumentTitle';
-import { ROUTES } from '../constants';
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import { Box, Button, Typography } from '@mui/material';
+import { ROUTES } from '../../constants';
 
 export default function NotFoundPage() {
   useDocumentTitle('Page Not Found');

@@ -1,12 +1,8 @@
 import { Navigate, Outlet } from 'react-router';
-import { useAppSelector } from '../../app/hooks';
-import type { UserRole } from '../../types';
+import { useAppSelector } from '../../../app/hooks';
+import type { ProtectedRouteProps } from '../../../types';
 
-interface Props {
-  allowedRoles?: UserRole[];
-}
-
-export default function ProtectedRoute({ allowedRoles }: Props) {
+export default function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
   if (!isAuthenticated) {

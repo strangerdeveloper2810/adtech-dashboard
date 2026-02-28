@@ -1,12 +1,6 @@
-import type { ReactNode } from 'react';
 import { Stack } from '@mui/material';
 import { PageTitle, TextMuted } from '../typography/Text';
-
-interface PageHeaderProps {
-  title: string;
-  subtitle?: string;
-  actions?: ReactNode;
-}
+import type { PageHeaderProps } from '../../../types';
 
 export function PageHeader({ title, subtitle, actions }: PageHeaderProps) {
   return (

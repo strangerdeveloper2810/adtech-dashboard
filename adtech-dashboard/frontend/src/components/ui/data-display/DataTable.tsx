@@ -12,26 +12,9 @@ import {
 } from '@mui/material';
 import { EmptyState } from '../feedback/EmptyState';
 import { TableSkeleton } from '../feedback/LoadingState';
+import type { DataTableProps } from '../../../types';
 
-// Column definition
-export interface Column<T> {
-  key: string;
-  label: string;
-  align?: 'left' | 'center' | 'right';
-  width?: number | string;
-  render?: (row: T) => ReactNode;
-}
-
-interface DataTableProps<T> {
-  columns: Column<T>[];
-  data: T[];
-  isLoading?: boolean;
-  emptyMessage?: string;
-  getRowKey: (row: T) => string | number;
-  onRowClick?: (row: T) => void;
-  toolbar?: ReactNode;
-  footer?: ReactNode;
-}
+export type { Column } from '../../../types';
 
 export function DataTable<T>({
   columns,

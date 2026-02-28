@@ -1,14 +1,5 @@
-import { TablePagination, type TablePaginationProps } from '@mui/material';
-
-interface PaginationProps {
-  total: number;
-  page: number;         // 0-indexed for MUI
-  rowsPerPage: number;
-  onPageChange: (page: number) => void;
-  onRowsPerPageChange: (rowsPerPage: number) => void;
-  rowsPerPageOptions?: number[];
-  component?: TablePaginationProps['component'];
-}
+import { TablePagination } from '@mui/material';
+import type { PaginationProps } from '../../../types';
 
 export function Pagination({
   total,

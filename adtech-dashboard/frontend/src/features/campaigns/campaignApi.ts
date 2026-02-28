@@ -4,16 +4,8 @@ import type {
   PaginatedResponse,
   Campaign,
   CampaignStatus,
+  CampaignListParams,
 } from '../../types';
-
-interface CampaignListParams {
-  page?: number;
-  limit?: number;
-  status?: CampaignStatus;
-  search?: string;
-  sort_by?: string;
-  sort_order?: 'asc' | 'desc';
-}
 
 export const campaignApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({

@@ -1,14 +1,6 @@
-import type { ReactNode } from 'react';
 import { Card, CardContent, Stack, Box } from '@mui/material';
 import { SectionTitle, TextMuted } from '../typography/Text';
-
-interface ChartCardProps {
-  title: string;
-  subtitle?: string;
-  height?: number;
-  action?: ReactNode;
-  children: ReactNode;
-}
+import type { ChartCardProps } from '../../../types';
 
 export function ChartCard({
   title,

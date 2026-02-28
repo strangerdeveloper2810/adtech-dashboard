@@ -22,6 +22,7 @@ export { EmptyState } from './feedback/EmptyState';
 export { ErrorState } from './feedback/ErrorState';
 export { LazyPage } from './feedback/Suspense';
 export { ErrorBoundary } from './feedback/ErrorBoundary';
+export { ToastContainer } from './feedback/ToastContainer';
 
 // Overlay
 export { ConfirmDialog } from './overlay/ConfirmDialog';

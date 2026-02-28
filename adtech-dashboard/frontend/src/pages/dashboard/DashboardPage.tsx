@@ -1,11 +1,10 @@
+import { useDocumentTitle } from '../../hooks/useDocumentTitle';
 import { Grid } from '@mui/material';
+import { PageHeader, StatCard, ChartCard, TextMuted } from '../../components/ui';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import CampaignIcon from '@mui/icons-material/Campaign';
 import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
 import TouchAppIcon from '@mui/icons-material/TouchApp';
-import { PageHeader, StatCard, ChartCard } from '../components/ui';
-import { TextMuted } from '../components/ui';
-import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 const stats = [
   { label: 'Active Campaigns', value: '—', icon: <CampaignIcon />, color: '#1976d2' },

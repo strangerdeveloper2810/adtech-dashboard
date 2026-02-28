@@ -4,7 +4,7 @@ import { ThemeProvider, CssBaseline } from '@mui/material';
 import { store } from './app/store';
 import { router } from './app/router';
 import theme from './app/theme';
-import { ErrorBoundary } from './components/ui';
+import { ErrorBoundary, ToastContainer } from './components/ui';
 
 export default function App() {
   return (
@@ -13,6 +13,7 @@ export default function App() {
         <ThemeProvider theme={theme}>
           <CssBaseline />
           <RouterProvider router={router} />
+          <ToastContainer />
         </ThemeProvider>
       </Provider>
     </ErrorBoundary>

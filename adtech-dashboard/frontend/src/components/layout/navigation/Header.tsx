@@ -1,3 +1,7 @@
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { useUIStore } from "../../../store/uiStore";
 import {
   AppBar,
   Toolbar,
@@ -7,14 +11,11 @@ import {
   Menu,
   MenuItem,
   Avatar,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { useAppDispatch, useAppSelector } from '../../app/hooks';
-import { logout } from '../../features/auth/authSlice';
-import { useUIStore } from '../../store/uiStore';
-import { APP_NAME, ROUTES } from '../../constants';
+} from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
+import { logout } from "../../../features/auth/authSlice";
+import { APP_NAME, ROUTES } from "../../../constants";
+import { getInitial } from "../../../utils/format";
 
 export default function Header() {
   const dispatch = useAppDispatch();
@@ -30,7 +31,10 @@ export default function Header() {
   };
 
   return (
-    <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
+    <AppBar
+      position="fixed"
+      sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+    >
       <Toolbar>
         <IconButton
           color="inherit"
@@ -44,9 +48,12 @@ export default function Header() {
           {APP_NAME}
         </Typography>
         <Box>
-          <IconButton onClick={(e) => setAnchorEl(e.currentTarget)} color="inherit">
-            <Avatar sx={{ width: 32, height: 32, bgcolor: 'secondary.main' }}>
-              {user?.full_name?.charAt(0).toUpperCase() || 'U'}
+          <IconButton
+            onClick={(e) => setAnchorEl(e.currentTarget)}
+            color="inherit"
+          >
+            <Avatar sx={{ width: 32, height: 32, bgcolor: "secondary.main" }}>
+              {getInitial(user?.name)}
             </Avatar>
           </IconButton>
           <Menu

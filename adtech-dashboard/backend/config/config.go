@@ -12,6 +12,13 @@ type Config struct {
 	DatabaseURL string
 	RedisURL    string
 	JWTSecret   string
+
+	// MinIO
+	MinIOEndpoint  string
+	MinIOAccessKey string
+	MinIOSecretKey string
+	MinIOBucket    string
+	MinIOUseSSL    bool
 }
 
 func Load() *Config {
@@ -24,6 +31,12 @@ func Load() *Config {
 		DatabaseURL: getEnv("DATABASE_URL", "postgres://adtech:adtech123@localhost:5432/adtech?sslmode=disable"),
 		RedisURL:    getEnv("REDIS_URL", "localhost:6379"),
 		JWTSecret:   getEnv("JWT_SECRET", "dev-secret-key"),
+
+		MinIOEndpoint:  getEnv("MINIO_ENDPOINT", "localhost:9000"),
+		MinIOAccessKey: getEnv("MINIO_ACCESS_KEY", "minioadmin"),
+		MinIOSecretKey: getEnv("MINIO_SECRET_KEY", "minioadmin123"),
+		MinIOBucket:    getEnv("MINIO_BUCKET", "adtech"),
+		MinIOUseSSL:    getEnv("MINIO_USE_SSL", "false") == "true",
 	}
 }
 

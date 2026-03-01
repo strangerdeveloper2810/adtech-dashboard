@@ -4,7 +4,7 @@ type MetricsFilter struct {
 	CampaignID  int64  `form:"campaignId" binding:"required"`
 	From        string `form:"from" binding:"required"`
 	To          string `form:"to" binding:"required"`
-	Granularity string `form:"granularity,default=daily" binding:"oneof=hourly daily weekly"`
+	Granularity string `form:"granularity,default=daily" binding:"oneof=hourly daily weekly monthly yearly"`
 }
 
 type MetricsResponse struct {
@@ -20,6 +20,7 @@ type MetricsResponse struct {
 type DashboardOverview struct {
 	TotalCampaigns   int64              `json:"totalCampaigns"`
 	ActiveCampaigns  int64              `json:"activeCampaigns"`
+	TotalEvents      int64              `json:"totalEvents"`
 	TotalImpressions int64              `json:"totalImpressions"`
 	TotalClicks      int64              `json:"totalClicks"`
 	TotalSpend       float64            `json:"totalSpend"`

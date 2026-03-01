@@ -48,3 +48,19 @@ func (h *AuthHandler) Login(c *gin.Context) {
 
 	SuccessResponse(c, http.StatusOK, resp)
 }
+
+func (h *AuthHandler) Refresh(c *gin.Context) {
+	var req dto.RefreshRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		ValidationError(c, err)
+		return
+	}
+
+	resp, err := h.authService.Refresh(c.Request.Context(), req.RefreshToken)
+	if err != nil {
+		UnauthorizedError(c, "invalid or expired refresh token")
+		return
+	}
+
+	SuccessResponse(c, http.StatusOK, resp)
+}

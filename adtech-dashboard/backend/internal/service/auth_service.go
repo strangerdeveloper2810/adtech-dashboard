@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"adtech/internal/domain"
@@ -10,16 +11,18 @@ import (
 	"adtech/internal/repository"
 
 	"github.com/golang-jwt/jwt/v5"
+	"github.com/redis/go-redis/v9"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService struct {
 	userRepo  repository.UserRepository
 	jwtSecret string
+	rdb       *redis.Client
 }
 
-func NewAuthService(userRepo repository.UserRepository, jwtSecret string) *AuthService {
-	return &AuthService{userRepo: userRepo, jwtSecret: jwtSecret}
+func NewAuthService(userRepo repository.UserRepository, jwtSecret string, rdb *redis.Client) *AuthService {
+	return &AuthService{userRepo: userRepo, jwtSecret: jwtSecret, rdb: rdb}
 }
 
 func (s *AuthService) Register(ctx context.Context, req dto.RegisterRequest) (*dto.AuthResponse, error) {
@@ -51,6 +54,44 @@ func (s *AuthService) Login(ctx context.Context, req dto.LoginRequest) (*dto.Aut
 
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password)); err != nil {
 		return nil, domain.ErrUnauthorized
+	}
+
+	return s.generateAuthResponse(user)
+}
+
+func (s *AuthService) Refresh(ctx context.Context, refreshToken string) (*dto.AuthResponse, error) {
+	// Parse and validate the refresh token
+	token, err := jwt.ParseWithClaims(refreshToken, &middleware.Claims{}, func(t *jwt.Token) (interface{}, error) {
+		return []byte(s.jwtSecret), nil
+	})
+	if err != nil || !token.Valid {
+		return nil, domain.ErrUnauthorized
+	}
+
+	claims, ok := token.Claims.(*middleware.Claims)
+	if !ok {
+		return nil, domain.ErrUnauthorized
+	}
+
+	// Check if refresh token is blacklisted in Redis
+	blacklistKey := fmt.Sprintf("blacklist:%s", refreshToken)
+	exists, _ := s.rdb.Exists(ctx, blacklistKey).Result()
+	if exists > 0 {
+		return nil, domain.ErrUnauthorized
+	}
+
+	// Get fresh user data
+	user, err := s.userRepo.GetByID(ctx, claims.UserID)
+	if err != nil {
+		return nil, domain.ErrUnauthorized
+	}
+
+	// Blacklist the old refresh token (set TTL to its remaining lifetime)
+	if claims.ExpiresAt != nil {
+		ttl := time.Until(claims.ExpiresAt.Time)
+		if ttl > 0 {
+			s.rdb.Set(ctx, blacklistKey, "1", ttl)
+		}
 	}
 
 	return s.generateAuthResponse(user)

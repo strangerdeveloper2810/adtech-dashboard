@@ -33,7 +33,20 @@ type CampaignMetrics struct {
 type DashboardOverview struct {
 	TotalCampaigns   int64
 	ActiveCampaigns  int64
+	TotalEvents      int64
 	TotalImpressions int64
 	TotalClicks      int64
 	TotalSpend       float64
+	TrafficByDevice  []DeviceBreakdown
+	TrafficByCountry []CountryBreakdown
+}
+
+type DeviceBreakdown struct {
+	Device string
+	Count  int64
+}
+
+type CountryBreakdown struct {
+	Country string
+	Count   int64
 }

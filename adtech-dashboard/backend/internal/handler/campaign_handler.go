@@ -3,7 +3,9 @@ package handler
 import (
 	"net/http"
 	"strconv"
+	"time"
 
+	"adtech/internal/domain"
 	"adtech/internal/dto"
 	"adtech/internal/repository"
 
@@ -16,6 +18,53 @@ type CampaignHandler struct {
 
 func NewCampaignHandler(campaignRepo repository.CampaignRepository) *CampaignHandler {
 	return &CampaignHandler{campaignRepo: campaignRepo}
+}
+
+func (h *CampaignHandler) Create(c *gin.Context) {
+	var req dto.CreateCampaignRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		ValidationError(c, err)
+		return
+	}
+
+	startDate, err := time.Parse("2006-01-02", req.StartDate)
+	if err != nil {
+		ValidationError(c, err)
+		return
+	}
+	endDate, err := time.Parse("2006-01-02", req.EndDate)
+	if err != nil {
+		ValidationError(c, err)
+		return
+	}
+
+	if endDate.Before(startDate) {
+		ErrorResponse(c, http.StatusBadRequest, "VALIDATION_ERROR", "end date must be after start date")
+		return
+	}
+
+	userID := c.GetInt64("userID")
+
+	campaign := &domain.Campaign{
+		UserID:      userID,
+		Name:        req.Name,
+		Description: req.Description,
+		Status:      domain.CampaignDraft,
+		Budget:      req.Budget,
+		DailyBudget: req.DailyBudget,
+		Spent:       0,
+		StartDate:   startDate,
+		EndDate:     endDate,
+		Targeting:   req.Targeting,
+	}
+
+	created, err := h.campaignRepo.Create(c.Request.Context(), campaign)
+	if err != nil {
+		InternalError(c)
+		return
+	}
+
+	SuccessResponse(c, http.StatusCreated, created)
 }
 
 func (h *CampaignHandler) List(c *gin.Context) {

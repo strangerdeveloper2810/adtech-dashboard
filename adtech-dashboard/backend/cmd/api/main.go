@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"log/slog"
 	"os"
 
@@ -10,6 +11,9 @@ import (
 	"adtech/internal/repository/postgres"
 	"adtech/internal/server"
 	"adtech/internal/service"
+	"adtech/internal/storage"
+	"adtech/internal/websocket"
+	"adtech/internal/worker"
 )
 
 func main() {
@@ -29,17 +33,44 @@ func main() {
 	rdb := database.ConnectRedis(cfg.RedisURL)
 	defer rdb.Close()
 
+	// Connect to MinIO
+	minioStorage := storage.NewMinIOStorage(
+		cfg.MinIOEndpoint, cfg.MinIOAccessKey, cfg.MinIOSecretKey,
+		cfg.MinIOBucket, cfg.MinIOUseSSL,
+	)
+
+	// WebSocket hub
+	hub := websocket.NewHub()
+	go hub.Run()
+
 	// Wire layers: repository → service → handler
 	userRepo := postgres.NewUserRepo(db)
 
-	authService := service.NewAuthService(userRepo, cfg.JWTSecret)
+	authService := service.NewAuthService(userRepo, cfg.JWTSecret, rdb)
 	authHandler := handler.NewAuthHandler(authService)
 
-	// Campaign handler (placeholder — will wire repo later)
-	// campaignRepo := postgres.NewCampaignRepo(db)
-	// campaignHandler := handler.NewCampaignHandler(campaignRepo)
+	// Campaign
+	campaignRepo := postgres.NewCampaignRepo(db)
+	campaignHandler := handler.NewCampaignHandler(campaignRepo)
+
+	// Ad
+	adRepo := postgres.NewAdRepo(db)
+	adHandler := handler.NewAdHandler(adRepo)
+
+	// Metrics / Events
+	eventRepo := postgres.NewEventRepo(db)
+
+	// Worker pool (5 workers for processing ad events)
+	pool := worker.NewPool(5, eventRepo, hub)
+	pool.Start(context.Background())
+	defer pool.Stop()
+
+	metricsHandler := handler.NewMetricsHandler(eventRepo, pool)
+
+	// Upload
+	uploadHandler := handler.NewUploadHandler(minioStorage)
 
 	// Start server
-	srv := server.New(cfg, authHandler, nil)
+	srv := server.New(cfg, authHandler, campaignHandler, adHandler, metricsHandler, uploadHandler, hub)
 	srv.Run()
 }

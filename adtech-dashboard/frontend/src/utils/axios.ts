@@ -1,60 +1,109 @@
-import axios from 'axios';
-import { store } from '../app/store';
-import { logout, updateAccessToken } from '../features/auth/authSlice';
+import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+import store from "../app/store";
+import { storage } from "./storage";
+import { logout, setCredentials } from "@/features/auth/authSlice";
 
 const api = axios.create({
-  baseURL: '/api/v1',
+  baseURL: "/api/v1",
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 
 // Request interceptor — attach JWT token
 api.interceptors.request.use(
-  (config) => {
-    const token = store.getState().auth.accessToken;
+  (config: InternalAxiosRequestConfig) => {
+    const token = storage.getAccessToken();
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
   },
-  (error) => Promise.reject(error),
+  (error: AxiosError) => {
+    return Promise.reject(error);
+  },
 );
 
 // Response interceptor — handle 401 + token refresh
+let isRefreshing = false;
+
+let failedQueue: Array<{
+  resolve: (value?: unknown) => void;
+  reject: (error: AxiosError) => void;
+}> = [];
+
+const processQueue = (
+  error: AxiosError | null,
+  token: string | null = null,
+) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(token);
+    }
+  });
+
+  failedQueue = [];
+};
+
 api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+  (response) => {
+    return response;
+  },
+  (error: AxiosError) => {
+    const originalRequest = error.config as InternalAxiosRequestConfig;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-
-      const refreshToken = store.getState().auth.refreshToken;
-      if (!refreshToken) {
-        store.dispatch(logout());
-        return Promise.reject(error);
-      }
-
-      try {
-        const { data } = await axios.post('/api/v1/auth/refresh', {
-          refreshToken,
+    if (error.response?.status === 401) {
+      if (isRefreshing) {
+        return new Promise((resolved, rejected) => {
+          failedQueue.push({ resolve: resolved, reject: rejected });
+        }).then((token) => {
+          if (originalRequest.headers) {
+            originalRequest.headers.Authorization = `Bearer ${token}`;
+          }
+          return api(originalRequest);
         });
-
-        const newAccessToken = data.data.accessToken;
-        store.dispatch(updateAccessToken(newAccessToken));
-
-        originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
-        return api(originalRequest);
-      } catch {
-        store.dispatch(logout());
-        return Promise.reject(error);
       }
+      isRefreshing = true;
+
+      const refreshToken = storage.getRefreshToken();
+
+      return axios
+        .post("/api/v1/auth/refresh", { refreshToken })
+        .then((response) => {
+          const {
+            accessToken,
+            user,
+            refreshToken: newRefreshToken,
+          } = response.data.data;
+
+          storage.setAccessToken(accessToken);
+          storage.setRefreshToken(newRefreshToken);
+          store.dispatch(
+            setCredentials({
+              accessToken,
+              refreshToken: newRefreshToken,
+              user,
+            }),
+          );
+          processQueue(null, accessToken);
+          return api(originalRequest);
+        })
+        .catch((refreshError) => {
+          processQueue(refreshError as AxiosError, null);
+          store.dispatch(logout());
+          window.location.href = "/login";
+          return Promise.reject(refreshError);
+        })
+
+        .finally(() => {
+          isRefreshing = false;
+        });
     }
 
     return Promise.reject(error);
   },
 );
-
 export default api;

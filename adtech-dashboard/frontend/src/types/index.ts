@@ -4,7 +4,6 @@ export type {
   User,
   AuthTokens,
   LoginRequest,
-  RegisterRequest,
   CampaignStatus,
   Targeting,
   Campaign,

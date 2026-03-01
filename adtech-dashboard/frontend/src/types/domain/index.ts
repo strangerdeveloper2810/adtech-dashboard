@@ -1,5 +1,5 @@
 export type { UserRole, User } from './user';
-export type { AuthTokens, LoginRequest, RegisterRequest } from './auth';
+export type { AuthTokens, LoginRequest } from './auth';
 export type {
   CampaignStatus,
   Targeting,

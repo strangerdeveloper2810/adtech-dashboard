@@ -1,20 +1,24 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
-import type { RootState } from './store';
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { RootState } from "./hooks";
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: '/api/v1',
-  prepareHeaders: (headers, { getState }) => {
+  baseUrl: "/api/v1",
+  prepareHeaders: (header, { getState }) => {
     const token = (getState() as RootState).auth.accessToken;
     if (token) {
-      headers.set('Authorization', `Bearer ${token}`);
+      header.set("Authorization", `Bearer ${token}`);
     }
-    return headers;
+    return header;
   },
 });
 
-export const apiSlice = createApi({
-  reducerPath: 'api',
+const apiSlice = createApi({
+  reducerPath: "api",
   baseQuery,
-  tagTypes: ['Campaign', 'Ad', 'Metrics', 'User'],
-  endpoints: () => ({}),
+  tagTypes: ["Campaign", "Ad", "Metrics", "User"],
+  endpoints: (builder) => ({
+    // Define your endpoints here
+  }),
 });
+
+export default apiSlice;

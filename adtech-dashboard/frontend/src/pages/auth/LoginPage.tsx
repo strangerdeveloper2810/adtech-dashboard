@@ -1,9 +1,8 @@
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useNavigate } from 'react-router';
-import { useLoginMutation } from '../../features/auth/authApi';
-import { useAppDispatch } from '../../app/hooks';
-import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import { type FC, type JSX } from "react";
+import { useNavigate } from "react-router";
+import { useForm } from "react-hook-form";
+import { useLoginMutation } from "@/features/auth/authApi";
+import { useAppDispatch } from "@/app/hooks";
 import {
   Box,
   Card,
@@ -11,43 +10,48 @@ import {
   TextField,
   Button,
   Typography,
-  Link,
-  Alert,
-} from '@mui/material';
-import { setCredentials } from '../../features/auth/authSlice';
-import { toast } from '../../store/toastStore';
-import type { LoginRequest } from '../../types';
+} from "@mui/material";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { type LoginInput, loginSchema } from "@/validation/auth.validation";
+import { toast } from "@/store/toastStore";
+import { setCredentials } from "@/features/auth/authSlice";
 
-export default function LoginPage() {
-  useDocumentTitle('Sign In');
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
+const LoginPage: FC = (): JSX.Element => {
   const [login, { isLoading }] = useLoginMutation();
-  const [error, setError] = useState('');
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginInput>({
+    resolver: zodResolver(loginSchema),
+    mode: "onChange",
+  });
 
-  const { register, handleSubmit, formState: { errors } } = useForm<LoginRequest>();
+  const dispatch = useAppDispatch();
 
-  const onSubmit = async (data: LoginRequest) => {
+  const navigate = useNavigate();
+
+  const handleSubmitFormLogin = async (data: LoginInput): Promise<void> => {
     try {
-      setError('');
       const result = await login(data).unwrap();
+
       dispatch(setCredentials(result.data));
-      toast.success('Login successful!');
-      navigate('/dashboard');
-    } catch {
-      setError('Invalid email or password');
-      toast.error('Invalid email or password');
+      toast.success("Login successful");
+      navigate("/dashboard");
+    } catch (err) {
+      const message = (err as any)?.data?.message || "Login failed";
+      toast.error(message);
     }
   };
 
   return (
     <Box
       sx={{
-        minHeight: '100vh',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        bgcolor: 'background.default',
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        bgcolor: "background.default",
       }}
     >
       <Card sx={{ width: 400, p: 2 }}>
@@ -56,14 +60,12 @@ export default function LoginPage() {
             AdTech Dashboard
           </Typography>
 
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-
-          <form onSubmit={handleSubmit(onSubmit)}>
+          <form onSubmit={handleSubmit(handleSubmitFormLogin)} noValidate>
             <TextField
               fullWidth
               label="Email"
               margin="normal"
-              {...register('email', { required: 'Email is required' })}
+              {...register("email")}
               error={!!errors.email}
               helperText={errors.email?.message}
             />
@@ -72,7 +74,7 @@ export default function LoginPage() {
               label="Password"
               type="password"
               margin="normal"
-              {...register('password', { required: 'Password is required' })}
+              {...register("password")}
               error={!!errors.password}
               helperText={errors.password?.message}
             />
@@ -84,18 +86,13 @@ export default function LoginPage() {
               disabled={isLoading}
               sx={{ mt: 2 }}
             >
-              {isLoading ? 'Signing in...' : 'Sign In'}
+              {isLoading ? "Logging in..." : "Login"}
             </Button>
           </form>
-
-          <Typography textAlign="center" mt={2} variant="body2">
-            Don't have an account?{' '}
-            <Link href="/register" underline="hover">
-              Register
-            </Link>
-          </Typography>
         </CardContent>
       </Card>
     </Box>
   );
-}
+};
+
+export default LoginPage;

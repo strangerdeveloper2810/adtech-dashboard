@@ -1,6 +1,6 @@
-import { Alert, Snackbar, Stack } from '@mui/material';
-import { useToastStore } from '../../../store/toastStore';
-import type { Toast } from '../../../types';
+import { Alert, Snackbar, Stack } from "@mui/material";
+import { useToastStore } from "../../../store/toastStore";
+import type { Toast } from "../../../types";
 
 export function ToastContainer() {
   const toasts = useToastStore((state) => state.toasts);
@@ -9,7 +9,7 @@ export function ToastContainer() {
   return (
     <Stack
       spacing={1}
-      sx={{ position: 'fixed', bottom: 24, right: 24, zIndex: 2000 }}
+      sx={{ position: "fixed", top: 24, right: 24, zIndex: 2000 }}
     >
       {toasts.map((t: Toast) => (
         <Snackbar
@@ -17,7 +17,7 @@ export function ToastContainer() {
           open
           autoHideDuration={4000}
           onClose={() => removeToast(t.id)}
-          sx={{ position: 'static' }}
+          sx={{ position: "static" }}
         >
           <Alert
             severity={t.severity}

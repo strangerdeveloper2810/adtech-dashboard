@@ -10,6 +10,8 @@ export type {
   CampaignMetrics,
   CampaignListParams,
   DashboardOverview,
+  CreateCampaignInput,
+  UpdateCampaignInput,
   AdType,
   Ad,
   EventType,
@@ -52,4 +54,8 @@ export type {
   ProtectedRouteProps,
   PerformanceTrendChartProps,
   LiveEventsChartProps,
+  CampaignFormProps,
 } from "./component";
+
+// Validation
+export type { CampaignFormValues } from "../validation/campaign.validation";

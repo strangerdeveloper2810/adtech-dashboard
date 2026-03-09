@@ -1,7 +1,7 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router';
-import { useGetCampaignsQuery } from '../../features/campaigns/campaignApi';
-import { useDocumentTitle } from '../../hooks/useDocumentTitle';
+import { useState } from "react";
+import { useNavigate } from "react-router";
+import { useGetCampaignsQuery } from "../../features/campaigns/campaignApi";
+import { useDocumentTitle } from "../../hooks/useDocumentTitle";
 import {
   Box,
   Typography,
@@ -19,19 +19,19 @@ import {
   TableRow,
   TablePagination,
   IconButton,
-} from '@mui/material';
-import SearchIcon from '@mui/icons-material/Search';
-import AddIcon from '@mui/icons-material/Add';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { CAMPAIGN_STATUS_COLORS, ROUTES } from '../../constants';
-import { formatCurrency } from '../../utils/format';
+} from "@mui/material";
+import SearchIcon from "@mui/icons-material/Search";
+import AddIcon from "@mui/icons-material/Add";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { CAMPAIGN_STATUS_COLORS, ROUTES } from "../../constants";
+import { formatCurrency } from "../../utils/format";
 
 export default function CampaignsPage() {
-  useDocumentTitle('Campaigns');
+  useDocumentTitle("Campaigns");
   const navigate = useNavigate();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
 
   const { data, isLoading } = useGetCampaignsQuery({
     page: page + 1,
@@ -44,7 +44,7 @@ export default function CampaignsPage() {
 
   return (
     <Box>
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 3 }}>
+      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 3 }}>
         <Typography variant="h4">Campaigns</Typography>
         <Button
           variant="contained"

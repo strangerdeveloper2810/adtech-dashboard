@@ -23,7 +23,7 @@ const metricApi = apiSlice.injectEndpoints({
       }),
       transformResponse: (response: ApiResponse<CampaignMetrics[]>) =>
         response.data,
-      providesTags: (result, error, { campaignId }) => [
+      providesTags: (_result, _error, { campaignId }) => [
         { type: "Metrics", id: campaignId },
       ],
     }),

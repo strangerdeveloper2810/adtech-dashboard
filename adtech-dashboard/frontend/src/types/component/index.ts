@@ -11,6 +11,7 @@ export type {
   SelectOption,
   SelectFieldProps,
   SearchInputProps,
+  CampaignFormProps,
 } from "./form";
 
 export type {

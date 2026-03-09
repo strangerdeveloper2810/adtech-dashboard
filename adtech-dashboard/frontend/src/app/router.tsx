@@ -10,6 +10,9 @@ const CampaignsPage = lazy(() => import("../pages/campaigns/CampaignsPage"));
 const CampaignNewPage = lazy(
   () => import("../pages/campaigns/children/CampaignNewPage"),
 );
+const CampaignEditPage = lazy(
+  () => import("../pages/campaigns/children/CampaignEditPage"),
+);
 const CampaignDetailPage = lazy(
   () => import("../pages/campaigns/children/CampaignDetailPage"),
 );
@@ -48,6 +51,14 @@ export const router = createBrowserRouter([
             element: (
               <LazyPage>
                 <CampaignNewPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: ROUTES.CAMPAIGN_EDIT,
+            element: (
+              <LazyPage>
+                <CampaignEditPage />
               </LazyPage>
             ),
           },

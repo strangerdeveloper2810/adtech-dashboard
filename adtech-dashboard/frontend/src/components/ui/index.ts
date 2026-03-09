@@ -10,6 +10,7 @@ export { DataTable, type Column } from './data-display/DataTable';
 export { StatCard } from './data-display/StatCard';
 export { StatusChip } from './data-display/StatusChip';
 export { ChartCard } from './data-display/ChartCard';
+export { InfoRow } from './data-display/InfoRow';
 
 // Form
 export { FormField } from './form/FormField';

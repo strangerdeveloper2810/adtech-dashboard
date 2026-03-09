@@ -1,5 +1,7 @@
 import type { TextFieldProps } from '@mui/material';
 import type { FieldErrors, FieldValues, Path, UseFormRegister } from 'react-hook-form';
+import type { Campaign } from '../domain/campaign';
+import type { CampaignFormValues } from '../../validation/campaign.validation';
 
 export type FormFieldProps<T extends FieldValues> = Omit<TextFieldProps, 'name'> & {
   name: Path<T>;
@@ -23,4 +25,11 @@ export interface SearchInputProps {
   placeholder?: string;
   debounceMs?: number;
   width?: number | string;
+}
+
+export interface CampaignFormProps {
+  defaultValues?: Partial<Campaign>;
+  onSubmit: (data: CampaignFormValues) => Promise<void>;
+  isSubmitting?: boolean;
+  submitLabel?: string;
 }

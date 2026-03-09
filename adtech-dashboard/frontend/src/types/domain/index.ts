@@ -7,6 +7,8 @@ export type {
   CampaignMetrics,
   CampaignListParams,
   DashboardOverview,
+  CreateCampaignInput,
+  UpdateCampaignInput,
 } from "./campaign";
 export type { AdType, Ad, EventType, AdEvent } from "./ad";
 export type { MetricParams } from "./metrics";

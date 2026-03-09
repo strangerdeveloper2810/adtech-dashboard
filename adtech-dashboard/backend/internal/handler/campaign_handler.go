@@ -111,6 +111,74 @@ func (h *CampaignHandler) GetByID(c *gin.Context) {
 	SuccessResponse(c, http.StatusOK, campaign)
 }
 
+func (h *CampaignHandler) Update(c *gin.Context) {
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		ValidationError(c, err)
+		return
+	}
+
+	var req dto.UpdateCampaignRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		ValidationError(c, err)
+		return
+	}
+
+	// Get existing campaign
+	campaign, err := h.campaignRepo.GetByID(c.Request.Context(), id)
+	if err != nil {
+		NotFoundError(c, "campaign")
+		return
+	}
+
+	// Update fields if provided
+	if req.Name != nil {
+		campaign.Name = *req.Name
+	}
+	if req.Description != nil {
+		campaign.Description = *req.Description
+	}
+	if req.Budget != nil {
+		campaign.Budget = *req.Budget
+	}
+	if req.DailyBudget != nil {
+		campaign.DailyBudget = req.DailyBudget
+	}
+	if req.StartDate != nil {
+		startDate, err := time.Parse("2006-01-02", *req.StartDate)
+		if err != nil {
+			ValidationError(c, err)
+			return
+		}
+		campaign.StartDate = startDate
+	}
+	if req.EndDate != nil {
+		endDate, err := time.Parse("2006-01-02", *req.EndDate)
+		if err != nil {
+			ValidationError(c, err)
+			return
+		}
+		campaign.EndDate = endDate
+	}
+	if req.Targeting != nil {
+		campaign.Targeting = *req.Targeting
+	}
+
+	// Validate dates
+	if campaign.EndDate.Before(campaign.StartDate) {
+		ErrorResponse(c, http.StatusBadRequest, "VALIDATION_ERROR", "end date must be after start date")
+		return
+	}
+
+	updated, err := h.campaignRepo.Update(c.Request.Context(), campaign)
+	if err != nil {
+		InternalError(c)
+		return
+	}
+
+	SuccessResponse(c, http.StatusOK, updated)
+}
+
 func (h *CampaignHandler) UpdateStatus(c *gin.Context) {
 	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
 	if err != nil {

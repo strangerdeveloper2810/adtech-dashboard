@@ -58,3 +58,19 @@ export interface CampaignListParams {
   sort_by?: string;
   sort_order?: "asc" | "desc";
 }
+
+// Input types for mutations (camelCase to match backend API)
+export interface CreateCampaignInput {
+  name: string;
+  description: string;
+  budget: number;
+  dailyBudget: number;
+  status?: CampaignStatus;
+  targeting?: Targeting;
+  startDate: string;
+  endDate: string;
+}
+
+export interface UpdateCampaignInput extends Partial<CreateCampaignInput> {
+  id: number;
+}

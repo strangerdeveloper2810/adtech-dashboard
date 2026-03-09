@@ -1,7 +1,18 @@
 import apiSlice from "@/app/api";
-import type { Campaign, CampaignListParams, PaginatedResponse } from "@/types";
+import type {
+  Campaign,
+  CampaignListParams,
+  PaginatedResponse,
+  CreateCampaignInput,
+  UpdateCampaignInput,
+} from "@/types";
 
-// Backend response structure for paginated endpoints
+// Backend response structure
+interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+}
+
 interface PaginatedApiResponse<T> {
   success: boolean;
   data: T[];
@@ -15,6 +26,7 @@ interface PaginatedApiResponse<T> {
 
 const campaignApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
+    // GET /campaigns - List campaigns
     getCampaigns: builder.query<
       PaginatedResponse<Campaign>,
       CampaignListParams
@@ -23,7 +35,6 @@ const campaignApi = apiSlice.injectEndpoints({
         url: "/campaigns",
         params,
       }),
-      // Transform response to match PaginatedResponse type
       transformResponse: (response: PaginatedApiResponse<Campaign>) => ({
         success: response.success,
         data: response.data,
@@ -40,7 +51,62 @@ const campaignApi = apiSlice.injectEndpoints({
             ]
           : [{ type: "Campaign", id: "LIST" }],
     }),
+
+    // GET /campaigns/:id - Get single campaign
+    getCampaignById: builder.query<
+      { success: boolean; data: Campaign },
+      string
+    >({
+      query: (id) => `/campaigns/${id}`,
+      transformResponse: (response: ApiResponse<Campaign>) => ({
+        success: response.success,
+        data: response.data,
+      }),
+      providesTags: (_result, _error, id) => [{ type: "Campaign", id }],
+    }),
+
+    // POST /campaigns - Create campaign
+    createCampaign: builder.mutation<Campaign, CreateCampaignInput>({
+      query: (body) => ({
+        url: "/campaigns",
+        method: "POST",
+        body,
+      }),
+      transformResponse: (response: ApiResponse<Campaign>) => response.data,
+      invalidatesTags: [{ type: "Campaign", id: "LIST" }],
+    }),
+
+    // PUT /campaigns/:id - Update campaign
+    updateCampaign: builder.mutation<Campaign, UpdateCampaignInput>({
+      query: ({ id, ...body }) => ({
+        url: `/campaigns/${id}`,
+        method: "PUT",
+        body,
+      }),
+      transformResponse: (response: ApiResponse<Campaign>) => response.data,
+      invalidatesTags: (_result, _error, { id }) => [
+        { type: "Campaign", id },
+        { type: "Campaign", id: "LIST" },
+      ],
+    }),
+
+    // DELETE /campaigns/:id - Delete campaign
+    deleteCampaign: builder.mutation<void, number>({
+      query: (id) => ({
+        url: `/campaigns/${id}`,
+        method: "DELETE",
+      }),
+      // Only invalidate LIST - don't invalidate the deleted campaign's tag
+      // as it will trigger a refetch of a non-existent resource
+      invalidatesTags: [{ type: "Campaign", id: "LIST" }],
+    }),
   }),
 });
 
-export const { useGetCampaignsQuery } = campaignApi;
+export const {
+  useGetCampaignsQuery,
+  useGetCampaignByIdQuery,
+  useCreateCampaignMutation,
+  useUpdateCampaignMutation,
+  useDeleteCampaignMutation,
+} = campaignApi;

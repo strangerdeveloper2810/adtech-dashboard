@@ -75,6 +75,7 @@ func (s *Server) Run() {
 		api.POST("/campaigns", s.campaignHandler.Create)
 		api.GET("/campaigns", s.campaignHandler.List)
 		api.GET("/campaigns/:id", s.campaignHandler.GetByID)
+		api.PUT("/campaigns/:id", s.campaignHandler.Update)
 		api.PATCH("/campaigns/:id/status", s.campaignHandler.UpdateStatus)
 		api.DELETE("/campaigns/:id", s.campaignHandler.Delete)
 	}

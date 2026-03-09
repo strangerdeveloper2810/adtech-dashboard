@@ -1,4 +1,9 @@
-export type CampaignStatus = 'draft' | 'active' | 'paused' | 'completed' | 'archived';
+export type CampaignStatus =
+  | "draft"
+  | "active"
+  | "paused"
+  | "completed"
+  | "archived";
 
 export interface Targeting {
   countries?: string[];
@@ -34,14 +39,15 @@ export interface CampaignMetrics {
 }
 
 export interface DashboardOverview {
-  total_campaigns: number;
-  active_campaigns: number;
-  total_spend: number;
-  total_impressions: number;
-  total_clicks: number;
-  total_conversions: number;
-  avg_ctr: number;
-  avg_cpc: number;
+  totalCampaigns: number;
+  activeCampaigns: number;
+  totalEvents: number;
+  totalImpressions: number;
+  totalClicks: number;
+  totalSpend: number;
+  averageCtr: number;
+  trafficByDevice: { device: string; count: number }[];
+  trafficByCountry: { country: string; count: number }[];
 }
 
 export interface CampaignListParams {
@@ -50,5 +56,5 @@ export interface CampaignListParams {
   status?: CampaignStatus;
   search?: string;
   sort_by?: string;
-  sort_order?: 'asc' | 'desc';
+  sort_order?: "asc" | "desc";
 }

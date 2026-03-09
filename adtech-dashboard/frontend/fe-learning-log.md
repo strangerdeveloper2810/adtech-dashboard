@@ -295,15 +295,433 @@ Result: Very good, missed points 5 and 6 / Rất tốt, thiếu nhẹ điểm 5 
 
 ---
 
+---
+
+## Session 2 (2026-03-09): Dashboard + ECharts + Redux Persist
+
+### Đã implement
+
+| # | Feature | File | Kiến thức |
+|---|---------|------|-----------|
+| 1 | Dashboard Overview API | `features/dashboard/dashboardApi.ts` | RTK Query `transformResponse`, `providesTags` |
+| 2 | StatCards với real data | `pages/DashboardPage.tsx` | Conditional rendering, props typing |
+| 3 | Device Distribution Chart | `components/charts/DeviceDistributionChart.tsx` | ECharts donut, `useMemo`, color mapping |
+| 4 | Country Traffic Chart | `components/charts/CountryTrafficChart.tsx` | ECharts horizontal bar, sort by value |
+| 5 | Campaign Selector | `pages/DashboardPage.tsx` | MUI Select, FormControl, handleChange |
+| 6 | Redux Persist | `app/store.ts`, `App.tsx` | `persistReducer`, `persistStore`, `PersistGate`, whitelist |
+| 7 | Dashboard Slice | `features/dashboard/dashboardSlice.ts` | `createSlice`, selected campaign state |
+| 8 | baseQueryWithReauth | `app/api.ts` | RTK Query token refresh, `BaseQueryFn` |
+
+---
+
+### Redux Persist — Chi tiết
+
+#### 1. Vấn đề cần giải quyết
+
+Redux store bị **reset về initialState** mỗi khi user:
+- Refresh trang (F5)
+- Close tab rồi mở lại
+- Navigate bằng URL trực tiếp
+
+→ User phải chọn lại campaign mỗi lần, UX tệ.
+
+#### 2. Giải pháp: Redux Persist
+
+Redux Persist **đồng bộ Redux store với localStorage** (hoặc sessionStorage/AsyncStorage cho React Native).
+
+Flow hoạt động:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                         APP BOOT                                │
+├─────────────────────────────────────────────────────────────────┤
+│ 1. createStore() → store có initialState                        │
+│ 2. persistStore() dispatch PERSIST action                       │
+│ 3. Đọc localStorage → tìm key "persist:adtech"                  │
+│ 4. Deserialize JSON → Redux state                               │
+│ 5. dispatch REHYDRATE action → merge vào store                  │
+│ 6. PersistGate nhận signal → render children                    │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                      RUNTIME (state change)                     │
+├─────────────────────────────────────────────────────────────────┤
+│ 1. Component dispatch action (vd: setSelectedCampaign(5))       │
+│ 2. Reducer update state                                         │
+│ 3. Persist middleware detect change trong whitelist slices      │
+│ 4. Serialize state → JSON                                       │
+│ 5. Write to localStorage["persist:adtech"]                      │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### 3. Cấu hình
+
+```typescript
+// app/store.ts
+import { persistStore, persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
+import storage from "redux-persist/lib/storage"; // localStorage wrapper
+
+const persistConfig = {
+  key: "adtech",           // key trong localStorage
+  storage,                 // engine (localStorage)
+  whitelist: ["dashboard"] // CHỈ persist những slice này (không persist auth, api cache)
+};
+
+const rootReducer = combineReducers({
+  auth: authSlice,
+  dashboard: dashboardSlice,
+  [apiSlice.reducerPath]: apiSlice.reducer,
+});
+
+// Wrap rootReducer với persist
+const persistedReducer = persistReducer(persistConfig, rootReducer);
+
+const store = configureStore({
+  reducer: persistedReducer,
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        // QUAN TRỌNG: ignore redux-persist internal actions
+        // (chúng chứa Promise, function - không serializable)
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat(apiSlice.middleware),
+});
+
+export const persistor = persistStore(store); // tạo persistor instance
+```
+
+#### 4. PersistGate
+
+```typescript
+// App.tsx
+import { PersistGate } from "redux-persist/integration/react";
+import { persistor } from "./app/store";
+
+<Provider store={store}>
+  <PersistGate loading={null} persistor={persistor}>
+    {/* children không render cho đến khi REHYDRATE xong */}
+  </PersistGate>
+</Provider>
+```
+
+**Tại sao cần PersistGate?**
+- REHYDRATE là **async** (đọc localStorage mất vài ms)
+- Nếu render trước khi REHYDRATE xong → component thấy initialState → flash sai data
+- PersistGate block render → đợi REHYDRATE → render với data đúng
+
+**`loading={null}`**: không hiện gì trong lúc chờ (hoặc có thể truyền spinner component)
+
+#### 5. Actions của Redux Persist
+
+| Action | Khi nào | Làm gì |
+|--------|---------|--------|
+| `PERSIST` | App boot, sau createStore | Khởi tạo persist, đọc localStorage |
+| `REHYDRATE` | Sau khi đọc localStorage xong | Merge persisted state vào store |
+| `PAUSE` | Tạm dừng persist (manual) | Ngừng write localStorage |
+| `FLUSH` | Force flush pending writes | Đảm bảo data được save ngay |
+| `PURGE` | Clear all persisted data | Xóa localStorage, logout |
+| `REGISTER` | Register new persistor | Internal |
+
+#### 6. Whitelist vs Blacklist
+
+```typescript
+// Whitelist: CHỈ persist những slice được liệt kê
+whitelist: ["dashboard", "settings"]
+
+// Blacklist: persist TẤT CẢ NGOẠI TRỪ những slice này
+blacklist: ["auth", "api"]
+```
+
+**Best practices:**
+- KHÔNG persist `auth` slice (token trong localStorage riêng, nếu persist cả slice → stale token vẫn được rehydrate)
+- KHÔNG persist RTK Query cache (`api` slice) — cache có TTL riêng, persist sẽ gây stale data
+- CHỈ persist UI state (selected items, filters, preferences)
+
+#### 7. Kiểm tra trong DevTools
+
+1. **Redux DevTools**: thấy 2 actions khi boot:
+   - `persist/PERSIST`
+   - `persist/REHYDRATE` với payload = data từ localStorage
+
+2. **Application tab → localStorage**:
+   - Key: `persist:adtech`
+   - Value: `{"dashboard":"{\"selectedCampaignId\":5}","_persist":{"version":-1,"rehydrated":true}}`
+
+---
+
+### baseQueryWithReauth — RTK Query Token Refresh
+
+#### Vấn đề
+
+RTK Query dùng `fetchBaseQuery` (wrapper của `fetch()`), KHÔNG dùng Axios → interceptor Axios KHÔNG chạy cho RTK Query requests.
+
+#### Giải pháp: Custom baseQuery wrapper
+
+```typescript
+// app/api.ts
+const baseQuery = fetchBaseQuery({
+  baseUrl: "/api",
+  prepareHeaders: (headers, { getState }) => {
+    const token = storage.getAccessToken();
+    if (token) headers.set("Authorization", `Bearer ${token}`);
+    return headers;
+  },
+});
+
+// Wrapper xử lý 401 và auto refresh
+const baseQueryWithReauth: BaseQueryFn<
+  string | FetchArgs,
+  unknown,
+  FetchBaseQueryError
+> = async (args, api, extraOptions) => {
+  // 1. Gọi API bình thường
+  let result = await baseQuery(args, api, extraOptions);
+
+  // 2. Nếu 401 → refresh token
+  if (result.error && result.error.status === 401) {
+    const refreshToken = storage.getRefreshToken();
+
+    if (refreshToken) {
+      // 3. Gọi refresh endpoint
+      const refreshResult = await baseQuery(
+        { url: "/auth/refresh", method: "POST", body: { refreshToken } },
+        api,
+        extraOptions
+      );
+
+      if (refreshResult.data) {
+        // 4. Thành công → save tokens + retry request gốc
+        const { data } = refreshResult.data as RefreshResponse;
+        storage.setAccessToken(data.accessToken);
+        storage.setRefreshToken(data.refreshToken);
+        api.dispatch(setCredentials({
+          accessToken: data.accessToken,
+          refreshToken: data.refreshToken,
+          user: data.user,
+        }));
+
+        // 5. Retry request ban đầu với token mới
+        result = await baseQuery(args, api, extraOptions);
+      } else {
+        // 6. Refresh thất bại → logout
+        api.dispatch(logout());
+        window.location.href = "/login";
+      }
+    }
+  }
+
+  return result;
+};
+
+// Dùng wrapper thay vì baseQuery trực tiếp
+export default createApi({
+  baseQuery: baseQueryWithReauth, // <-- THAY ĐỔI Ở ĐÂY
+  endpoints: () => ({}),
+});
+```
+
+#### So sánh với Axios Interceptor
+
+| Axios Interceptor | baseQueryWithReauth |
+|-------------------|---------------------|
+| Cho `axios.get/post()` calls | Cho RTK Query endpoints |
+| `api.interceptors.response.use()` | Custom `BaseQueryFn` wrapper |
+| Queue pattern cho concurrent 401s | Simple (1 request tại 1 thời điểm) |
+| `api(originalRequest)` retry | `baseQuery(args)` retry |
+
+**Khi nào dùng cái nào?**
+- Axios interceptor: nếu gọi API trực tiếp bằng `axios.get()` (ít khi trong app dùng RTK Query)
+- baseQueryWithReauth: nếu dùng RTK Query hooks (`useGetCampaignsQuery`, etc.)
+
+**Note:** Có thể giữ cả 2 nếu app có mixed usage (một số chỗ dùng axios, một số dùng RTK Query).
+
+---
+
+### transformResponse + providesTags
+
+#### transformResponse
+
+Backend trả về:
+```json
+{
+  "success": true,
+  "data": [...],
+  "meta": { "total": 100, "page": 1, "limit": 10, "totalPages": 10 }
+}
+```
+
+RTK Query default chỉ lấy response body → cần transform:
+
+```typescript
+getCampaigns: builder.query<PaginatedResponse<Campaign>, CampaignListParams>({
+  query: (params) => ({ url: "/campaigns", params }),
+  // Transform response structure
+  transformResponse: (response: PaginatedApiResponse<Campaign>) => ({
+    success: response.success,
+    data: response.data,
+    meta: response.meta,
+  }),
+}),
+```
+
+#### providesTags
+
+```typescript
+providesTags: (result) =>
+  result?.data
+    ? [
+        // Tag cho từng campaign (invalidate 1 campaign)
+        ...result.data.map(({ id }) => ({ type: "Campaign" as const, id })),
+        // Tag cho list (invalidate tất cả)
+        { type: "Campaign", id: "LIST" },
+      ]
+    : [{ type: "Campaign", id: "LIST" }],
+```
+
+**Flow:**
+1. `getCampaigns` query có tags `Campaign:1`, `Campaign:2`, `Campaign:LIST`
+2. `createCampaign` mutation thành công → `invalidatesTags: [{ type: "Campaign", id: "LIST" }]`
+3. RTK Query thấy tag `Campaign:LIST` bị invalidate → auto refetch `getCampaigns`
+
+---
+
+### Kiến thức ECharts
+
+#### Pattern chuẩn
+
+```typescript
+// 1. useRef cho DOM container
+const chartRef = useRef<HTMLDivElement>(null);
+
+// 2. useMemo cho options (tránh re-create mỗi render)
+const options = useMemo(() => ({
+  // chart config
+}), [data]); // chỉ re-create khi data thay đổi
+
+// 3. useEffect init/update chart
+useEffect(() => {
+  if (!chartRef.current) return;
+
+  // Dispose cũ nếu có
+  const existingInstance = echarts.getInstanceByDom(chartRef.current);
+  if (existingInstance) existingInstance.dispose();
+
+  // Init mới
+  const chart = echarts.init(chartRef.current);
+  chart.setOption(options);
+
+  // Cleanup khi unmount
+  return () => chart.dispose();
+}, [options]);
+
+// 4. Render container với fixed height
+return <div ref={chartRef} style={{ width: "100%", height: 300 }} />;
+```
+
+#### Tại sao useMemo cho options?
+
+```typescript
+// ❌ KHÔNG DÙNG: options object mới mỗi render → useEffect chạy liên tục → chart bị re-init
+const options = { title: { text: "Chart" } };
+
+// ✅ DÙNG: options chỉ thay đổi khi dependencies thay đổi
+const options = useMemo(() => ({
+  title: { text: "Chart" }
+}), []); // [] = không bao giờ thay đổi
+```
+
+---
+
+### Lỗi đã mắc & bài học (Session 2)
+
+| # | Lỗi | Hậu quả | Cách sửa |
+|---|-----|---------|----------|
+| 1 | `result.data.map()` khi result undefined | TypeError: Cannot read map of undefined | `result?.data` optional chaining |
+| 2 | transformResponse trả về sai structure | RTK Query hooks nhận data rỗng | Check backend response format bằng curl trước |
+| 3 | PaginationMeta `total_pages` vs `totalPages` | Type mismatch, TS error | Check backend JSON camelCase convention |
+| 4 | Quên `loading={null}` trong PersistGate | TypeScript error | Thêm loading prop (null hoặc spinner) |
+| 5 | Persist auth slice | Token hết hạn vẫn được rehydrate | Chỉ whitelist UI state, không persist auth |
+
+---
+
+### Techbate Session 2 — Q&A
+
+**Q1: Redux Persist hoạt động như thế nào?**
+
+> **EN:** Redux Persist syncs Redux store with localStorage through a 2-way binding:
+> - **On boot:** dispatch PERSIST → read localStorage → dispatch REHYDRATE → merge into store
+> - **On change:** reducer updates state → persist middleware detects change in whitelisted slices → serialize → write to localStorage
+>
+> PersistGate blocks rendering until REHYDRATE completes to prevent UI flash with wrong data.
+>
+> **VN:** Redux Persist đồng bộ 2 chiều giữa Redux store và localStorage:
+> - **Khi boot:** dispatch PERSIST → đọc localStorage → dispatch REHYDRATE → merge vào store
+> - **Khi state thay đổi:** reducer update → middleware detect → serialize → ghi localStorage
+>
+> PersistGate chặn render cho đến khi REHYDRATE xong để tránh flash data sai.
+
+---
+
+**Q2: Tại sao cần baseQueryWithReauth khi đã có Axios interceptor?**
+
+> **EN:** RTK Query uses `fetchBaseQuery` (a fetch() wrapper), NOT Axios. Axios interceptors only apply to `axios.get/post()` calls. Since RTK Query hooks don't use Axios, we need a custom baseQuery wrapper to handle 401 and token refresh.
+>
+> **VN:** RTK Query dùng `fetchBaseQuery` (wrapper của fetch()), KHÔNG dùng Axios. Axios interceptors chỉ apply cho `axios.get/post()`. RTK Query hooks không qua Axios → cần custom baseQuery wrapper để xử lý 401 và refresh token.
+
+---
+
+**Q3: Whitelist vs Blacklist trong redux-persist?**
+
+> **EN:**
+> - **Whitelist:** ONLY persist listed slices. Recommended because explicit is better than implicit.
+> - **Blacklist:** Persist ALL EXCEPT listed slices. Risky because new slices get persisted by default.
+>
+> Best practice: whitelist UI state only (selected items, filters). DO NOT persist auth (stale tokens) or api cache (stale data).
+>
+> **VN:**
+> - **Whitelist:** CHỈ persist những slice được liệt kê. Khuyến khích vì explicit hơn.
+> - **Blacklist:** Persist TẤT CẢ NGOẠI TRỪ. Rủi ro vì slice mới tự động bị persist.
+>
+> Best practice: chỉ whitelist UI state. KHÔNG persist auth (token hết hạn) hoặc api cache (stale data).
+
+---
+
+**Q4: Tại sao cần serializableCheck ignoredActions cho redux-persist?**
+
+> **EN:** Redux Persist's internal actions (PERSIST, REHYDRATE, etc.) contain non-serializable values like Promises and functions. Redux Toolkit's middleware throws warnings/errors for non-serializable action payloads. We ignore these specific actions to suppress false warnings.
+>
+> **VN:** Các actions nội bộ của Redux Persist (PERSIST, REHYDRATE, v.v.) chứa giá trị không serializable như Promise và function. Middleware của Redux Toolkit báo warning/error khi action có payload không serializable. Ta ignore những actions này để tránh warning sai.
+
+---
+
+**Q5: providesTags pattern trong RTK Query?**
+
+> **EN:** Tags enable automatic cache invalidation:
+> 1. Query provides tags: `[{ type: "Campaign", id: 1 }, { type: "Campaign", id: "LIST" }]`
+> 2. Mutation invalidates tags: `invalidatesTags: [{ type: "Campaign", id: "LIST" }]`
+> 3. RTK Query sees tag invalidated → auto-refetches queries with that tag
+>
+> Pattern: list queries provide `id: "LIST"` tag. Mutations (create/delete) invalidate `id: "LIST"`. Update mutations invalidate specific `id: campaignId`.
+>
+> **VN:** Tags cho phép auto invalidate cache:
+> 1. Query provides tags: `[{ type: "Campaign", id: 1 }, { type: "Campaign", id: "LIST" }]`
+> 2. Mutation invalidates tags: `invalidatesTags: [{ type: "Campaign", id: "LIST" }]`
+> 3. RTK Query thấy tag bị invalidate → auto refetch queries có tag đó
+>
+> Pattern: list queries có tag `id: "LIST"`. Mutations (create/delete) invalidate `id: "LIST"`. Update mutations invalidate specific `id: campaignId`.
+
+---
+
 ## Tasks còn lại
 
 | Task | Feature | Kiến thức sẽ học |
 |------|---------|-----------------|
-| 1 | Metrics RTK Query API | query params, `skip` option, dependent queries (fetch phụ thuộc kết quả fetch khác) |
-| 2 | WebSocket Types + Constants | TypeScript union types, constants pattern |
-| 3 | useWebSocket Hook | useRef buffer, requestAnimationFrame batching (gom nhiều update thành 1 render), exponential backoff (1s→2s→4s→8s) |
-| 4 | ECharts Components (4 charts) | useMemo cho chart options (tránh re-create mỗi render), MUI theme integration |
-| 5 | DashboardPage | useCallback (stable function reference), conditional rendering (loading/error/empty states), Grid layout |
+| ~~1~~ | ~~Metrics RTK Query API~~ | ~~query params, transformResponse~~ ✅ |
+| ~~2~~ | ~~WebSocket Types~~ | ~~TypeScript union types~~ ✅ |
+| ~~3~~ | ~~useWebSocket Hook~~ | ~~useRef buffer, exponential backoff~~ ✅ |
+| ~~4~~ | ~~ECharts Components~~ | ~~useMemo, dispose pattern~~ ✅ |
+| ~~5~~ | ~~DashboardPage~~ | ~~conditional rendering, Grid~~ ✅ |
 | 6 | CampaignDetailPage | useParams (lấy id từ URL), single entity fetch, ConfirmDialog |
 | 7 | CampaignNewPage | complex Zod schema (budget > 0, endDate > startDate), date pickers, edit mode (prefill form) |
 | 8 | Refactor CampaignsPage | Generic TypeScript `<T>` (component nhận type linh hoạt), component composition |
@@ -317,7 +735,8 @@ Result: Very good, missed points 5 and 6 / Rất tốt, thiếu nhẹ điểm 5 
 | Tier 0 - JS Core | !! operator (type coercion), Promise (resolve/reject/then/catch/finally) |
 | Tier 0 - TypeScript | ReturnType, generics `<T>`, z.infer, withTypes |
 | Tier 1 - React Core | Route guards (ProtectedRoute, GuestRoute), Navigate, Outlet |
-| Tier 3 - Client State | localStorage sync (lưu/đọc token), Zustand toast store |
-| Tier 3 - Server State | tagTypes (cache invalidation concept) |
-| Tier 3 - Redux Deep | configureStore, createSlice, RTK Query (createApi, fetchBaseQuery, injectEndpoints, mutations) |
+| Tier 3 - Client State | localStorage sync (lưu/đọc token), Zustand toast store, **Redux Persist (whitelist, PERSIST, REHYDRATE, PersistGate)** |
+| Tier 3 - Server State | tagTypes (cache invalidation concept), **providesTags/invalidatesTags pattern, transformResponse** |
+| Tier 3 - Redux Deep | configureStore, createSlice, RTK Query (createApi, fetchBaseQuery, injectEndpoints, mutations), **baseQueryWithReauth wrapper** |
 | Go - API Auth | JWT flow (access + refresh token), token refresh interceptor pattern |
+| FE Optimization | **useMemo cho chart options, useRef cho DOM container, useEffect cleanup (dispose)** |

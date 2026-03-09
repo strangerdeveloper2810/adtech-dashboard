@@ -14,13 +14,19 @@ export type {
   Ad,
   EventType,
   AdEvent,
-} from './domain';
+  MetricParams,
+} from "./domain";
 
 // API
-export type { ApiResponse, PaginatedResponse, PaginationMeta, ApiError } from './api';
+export type {
+  ApiResponse,
+  PaginatedResponse,
+  PaginationMeta,
+  ApiError,
+} from "./api";
 
 // Store
-export type { AuthState, UIState, Toast, ToastStore } from './store';
+export type { AuthState, UIState, Toast, ToastStore } from "./store";
 
 // Component props
 export type {
@@ -44,4 +50,6 @@ export type {
   PaginationProps,
   PageHeaderProps,
   ProtectedRouteProps,
-} from './component';
+  PerformanceTrendChartProps,
+  LiveEventsChartProps,
+} from "./component";

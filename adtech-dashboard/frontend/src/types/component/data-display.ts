@@ -1,11 +1,11 @@
-import type { ReactNode } from 'react';
-import type { ChipProps } from '@mui/material';
-import type { CampaignStatus } from '../domain/campaign';
+import type { ReactNode } from "react";
+import type { ChipProps } from "@mui/material";
+import type { CampaignStatus } from "../domain/campaign";
 
 export interface Column<T> {
   key: string;
   label: string;
-  align?: 'left' | 'center' | 'right';
+  align?: "left" | "center" | "right";
   width?: number | string;
   render?: (row: T) => ReactNode;
 }
@@ -31,7 +31,7 @@ export interface StatCardProps {
 
 export interface StatusChipProps {
   status: CampaignStatus;
-  size?: ChipProps['size'];
+  size?: ChipProps["size"];
 }
 
 export interface ChartCardProps {

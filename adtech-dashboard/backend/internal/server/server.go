@@ -20,6 +20,7 @@ import (
 type Server struct {
 	cfg             *config.Config
 	authHandler     *handler.AuthHandler
+	userHandler     *handler.UserHandler
 	campaignHandler *handler.CampaignHandler
 	adHandler       *handler.AdHandler
 	metricsHandler  *handler.MetricsHandler
@@ -30,6 +31,7 @@ type Server struct {
 func New(
 	cfg *config.Config,
 	authHandler *handler.AuthHandler,
+	userHandler *handler.UserHandler,
 	campaignHandler *handler.CampaignHandler,
 	adHandler *handler.AdHandler,
 	metricsHandler *handler.MetricsHandler,
@@ -39,6 +41,7 @@ func New(
 	return &Server{
 		cfg:             cfg,
 		authHandler:     authHandler,
+		userHandler:     userHandler,
 		campaignHandler: campaignHandler,
 		adHandler:       adHandler,
 		metricsHandler:  metricsHandler,
@@ -69,6 +72,15 @@ func (s *Server) Run() {
 	// Protected routes
 	api := r.Group("/api/v1")
 	api.Use(middleware.Auth(s.cfg.JWTSecret))
+
+	// Users (admin only)
+	if s.userHandler != nil {
+		admin := api.Group("/")
+		admin.Use(middleware.RequireRole("admin"))
+		admin.GET("/users", s.userHandler.List)
+		admin.GET("/users/:id", s.userHandler.GetByID)
+		admin.PATCH("/users/:id/role", s.userHandler.UpdateRole)
+	}
 
 	// Campaigns
 	if s.campaignHandler != nil {

@@ -48,6 +48,7 @@ func main() {
 
 	authService := service.NewAuthService(userRepo, cfg.JWTSecret, rdb)
 	authHandler := handler.NewAuthHandler(authService)
+	userHandler := handler.NewUserHandler(userRepo)
 
 	// Campaign
 	campaignRepo := postgres.NewCampaignRepo(db)
@@ -71,6 +72,6 @@ func main() {
 	uploadHandler := handler.NewUploadHandler(minioStorage)
 
 	// Start server
-	srv := server.New(cfg, authHandler, campaignHandler, adHandler, metricsHandler, uploadHandler, hub)
+	srv := server.New(cfg, authHandler, userHandler, campaignHandler, adHandler, metricsHandler, uploadHandler, hub)
 	srv.Run()
 }

@@ -21,27 +21,27 @@ export const typography: TypographyVariantsOptions = {
   fontWeightMedium: 500,
   fontWeightBold: 600,
 
-  /* ---- Display · Fraunces ------------------------------------------- */
+  /* ---- Display · Instrument Serif (single weight 400) --------------- */
   h1: {
     fontFamily: serif,
-    fontWeight: 600,
-    fontSize: '2.25rem', // 36px
+    fontWeight: 400,
+    fontSize: '2.5rem', // 40px — serif reads smaller, so bump
     lineHeight: 1.1,
-    letterSpacing: '-0.02em',
+    letterSpacing: '-0.01em',
   },
   h2: {
     fontFamily: serif,
-    fontWeight: 600,
-    fontSize: '1.875rem', // 30px
+    fontWeight: 400,
+    fontSize: '2rem', // 32px
     lineHeight: 1.15,
-    letterSpacing: '-0.01em',
+    letterSpacing: '-0.005em',
   },
   h3: {
     fontFamily: serif,
-    fontWeight: 600,
-    fontSize: '1.5rem', // 24px
+    fontWeight: 400,
+    fontSize: '1.625rem', // 26px
     lineHeight: 1.2,
-    letterSpacing: '-0.01em',
+    letterSpacing: 0,
   },
 
   /* ---- Titles · Geist ----------------------------------------------- */

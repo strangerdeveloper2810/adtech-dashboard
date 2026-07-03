@@ -12,12 +12,12 @@
 export const signalTokens = {
   /* ---- Type families ------------------------------------------------ */
   font: {
-    /** Body & UI — Geist */
-    sans: '"Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-    /** Display headings (h1–h3) & headline numbers — Fraunces */
-    serif: '"Fraunces", Georgia, "Times New Roman", serif',
-    /** Overline / numeric / code / tokens — Geist Mono */
-    mono: '"Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace',
+    /** Body & UI — Geist (self-hosted variable) */
+    sans: '"Geist Variable", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    /** Display headings (h1–h3) — Instrument Serif (self-hosted) */
+    serif: '"Instrument Serif", Georgia, "Times New Roman", serif',
+    /** Overline / numeric / code / tokens — Geist Mono (self-hosted variable) */
+    mono: '"Geist Mono Variable", ui-monospace, SFMono-Regular, Menlo, monospace',
   },
 
   /* ---- Warm neutral scale (light, canonical) ------------------------ */

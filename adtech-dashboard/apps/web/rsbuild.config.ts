@@ -20,17 +20,8 @@ export default defineConfig({
     ],
   },
   html: {
+    // Fonts are self-hosted via @fontsource (imported in src/index.tsx).
     title: 'AdTech Dashboard',
-    // Signal fonts: Fraunces (display) + Geist / Geist Mono (sans + mono).
-    tags: [
-      {
-        tag: 'link',
-        attrs: {
-          rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap',
-        },
-      },
-    ],
   },
   resolve: {
     alias: {

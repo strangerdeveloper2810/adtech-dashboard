@@ -1,0 +1,1516 @@
+<!doctype html>
+<html lang="vi" data-theme="light">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>AdTech · Design System</title>
+<meta name="description" content="Signal — the AdTech Dashboard design system. Foundations, atoms, molecules, organisms, templates." />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* ============================================================
+   SIGNAL — AdTech Design System
+   Editorial precision · Fraunces / Geist / Geist Mono
+   Self-contained. No build. Double-click to open.
+   ============================================================ */
+
+/* ---- Tokens : LIGHT (canonical) ------------------------------ */
+:root{
+  /* type families */
+  --serif: "Fraunces", Georgia, "Times New Roman", serif;
+  --sans:  "Geist", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --mono:  "Geist Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* neutral — WARM greys (paper-toned, not cool slate) */
+  --n-50:#FBFAF8;  --n-100:#F4F1EC; --n-200:#E7E1D6; --n-300:#D9D1C2;
+  --n-400:#B8AF9F; --n-500:#8A8175; --n-600:#6B6355; --n-700:#514B3E;
+  --n-800:#38332A; --n-900:#211E18;
+
+  /* brand / accent — cobalt */
+  --accent:#2340D9; --accent-ink:#1B33B0; --accent-hi:#3D57E8; --accent-soft:#EAEDFC;
+
+  /* semantic */
+  --success:#0F766E; --success-soft:#E2F1EF;
+  --warning:#B45309; --warning-soft:#FBEEDD;
+  --error:#BE123C;   --error-soft:#FBE6EC;
+  --info:#0E7490;    --info-soft:#E1F1F5;
+
+  /* surfaces & text (semantic aliases) */
+  --paper:#FBFAF8;
+  --surface:#F4F1EC;
+  --panel:#FFFFFF;
+  --ink:#17150F;
+  --ink-2:#514B3E;
+  --muted:#8A8175;
+  --faint:#B8AF9F;
+  --line:#E7E1D6;
+  --line-strong:#D9D1C2;
+
+  /* radius */
+  --r-xs:4px; --r-sm:6px; --r-md:10px; --r-lg:14px; --r-xl:20px; --r-pill:999px;
+
+  /* elevation (warm-tinted) */
+  --e-1:0 1px 2px rgba(33,30,24,.06);
+  --e-2:0 1px 3px rgba(33,30,24,.10), 0 1px 2px rgba(33,30,24,.06);
+  --e-3:0 6px 16px -6px rgba(33,30,24,.16), 0 2px 6px -2px rgba(33,30,24,.08);
+  --e-4:0 20px 40px -12px rgba(33,30,24,.24);
+
+  /* motion */
+  --ease:cubic-bezier(.22,.61,.36,1);
+  --fast:120ms; --base:220ms; --slow:420ms;
+
+  /* space scale (8px base) */
+  --s-1:4px; --s-2:8px; --s-3:12px; --s-4:16px; --s-5:24px; --s-6:32px; --s-7:48px; --s-8:64px; --s-9:96px;
+}
+
+/* ---- Tokens : DARK ------------------------------------------- */
+[data-theme="dark"]{
+  --paper:#14120E;
+  --surface:#1C1A15;
+  --panel:#201D17;
+  --ink:#F3EEE4;
+  --ink-2:#CFC6B6;
+  --muted:#A69C8B;
+  --faint:#6B6355;
+  --line:#2E2A22;
+  --line-strong:#3A352B;
+
+  --accent:#7C8FF7; --accent-ink:#93A3F9; --accent-hi:#A6B3FA; --accent-soft:#20223A;
+  --success:#5EBAAF; --success-soft:#16231F;
+  --warning:#E0913F; --warning-soft:#2A2013;
+  --error:#F0728E;   --error-soft:#2C1620;
+  --info:#4DB6CE;    --info-soft:#12232A;
+
+  --n-50:#211E18; --n-100:#2A2620; --n-200:#38332A; --n-300:#514B3E;
+  --n-400:#6B6355; --n-500:#8A8175; --n-600:#B8AF9F; --n-700:#D9D1C2;
+  --n-800:#E7E1D6; --n-900:#F4F1EC;
+
+  --e-1:0 1px 2px rgba(0,0,0,.4);
+  --e-2:0 1px 3px rgba(0,0,0,.5), 0 1px 2px rgba(0,0,0,.4);
+  --e-3:0 8px 20px -8px rgba(0,0,0,.6);
+  --e-4:0 24px 48px -12px rgba(0,0,0,.7);
+}
+
+/* ---- Reset --------------------------------------------------- */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+h1,h2,h3,h4,h5,h6,p,figure{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+a{color:inherit;text-decoration:none}
+::selection{background:var(--accent);color:#fff}
+
+/* ---- Base ---------------------------------------------------- */
+body{
+  font-family:var(--sans);
+  font-size:15px;
+  line-height:1.6;
+  color:var(--ink);
+  background:var(--paper);
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--base) var(--ease), color var(--base) var(--ease);
+}
+/* faint editorial paper atmosphere */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(1200px 600px at 78% -8%, color-mix(in srgb,var(--accent) 7%,transparent), transparent 60%),
+    radial-gradient(900px 500px at -10% 12%, color-mix(in srgb,var(--warning) 6%,transparent), transparent 55%);
+  opacity:.9;
+}
+
+/* ---- App shell ----------------------------------------------- */
+.shell{position:relative;z-index:1;display:grid;grid-template-columns:264px minmax(0,1fr);gap:0;max-width:1400px;margin:0 auto}
+@media(max-width:960px){.shell{grid-template-columns:1fr}}
+
+/* ---- Sidebar TOC --------------------------------------------- */
+.toc{position:sticky;top:0;align-self:start;height:100vh;overflow-y:auto;padding:var(--s-6) var(--s-5);border-right:1px solid var(--line)}
+@media(max-width:960px){.toc{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:var(--s-6)}
+.brand .mark{width:34px;height:34px;border-radius:9px;background:var(--accent);position:relative;box-shadow:var(--e-2);flex:none}
+.brand .mark::before{content:"";position:absolute;inset:9px 9px auto 9px;height:4px;border-radius:2px;background:#fff;opacity:.95}
+.brand .mark::after{content:"";position:absolute;inset:auto 9px 9px 9px;height:9px;border-radius:2px;background:#fff;opacity:.55}
+.brand b{font-family:var(--serif);font-weight:600;font-size:18px;letter-spacing:-.01em;line-height:1}
+.brand small{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+
+.toc nav{display:flex;flex-direction:column;gap:1px}
+.toc a{display:flex;align-items:baseline;gap:10px;padding:7px 10px;border-radius:var(--r-sm);color:var(--ink-2);font-size:14px;transition:background var(--fast) var(--ease),color var(--fast) var(--ease)}
+.toc a .num{font-family:var(--mono);font-size:11px;color:var(--faint);width:20px;flex:none}
+.toc a:hover{background:var(--surface);color:var(--ink)}
+.toc a.active{background:var(--accent-soft);color:var(--accent-ink);font-weight:500}
+.toc a.active .num{color:var(--accent)}
+[data-theme="dark"] .toc a.active{color:var(--accent-hi)}
+
+/* ---- Main ---------------------------------------------------- */
+main{padding:var(--s-7) clamp(var(--s-5),6vw,var(--s-9)) var(--s-9)}
+.section{padding:var(--s-8) 0;border-top:1px solid var(--line)}
+.section:first-of-type{border-top:0;padding-top:var(--s-5)}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.eyebrow::after{content:"";height:1px;flex:1;background:var(--line)}
+.h-display{font-family:var(--serif);font-weight:600;font-size:clamp(30px,4.4vw,42px);line-height:1.08;letter-spacing:-.02em}
+.lede{font-size:17px;color:var(--ink-2);max-width:60ch;margin-top:14px}
+.subhead{font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:-.01em;margin:var(--s-6) 0 var(--s-4)}
+.note{font-size:13.5px;color:var(--muted);max-width:64ch;margin-top:8px}
+code,.k{font-family:var(--mono);font-size:.86em;background:var(--surface);border:1px solid var(--line);padding:1px 6px;border-radius:5px;color:var(--ink-2)}
+
+/* ---- Hero ---------------------------------------------------- */
+.hero{padding:var(--s-8) 0 var(--s-6)}
+.hero .h-display{font-size:clamp(40px,7vw,72px)}
+.hero .h-display em{font-style:italic;color:var(--accent)}
+.hero-meta{display:flex;flex-wrap:wrap;gap:8px;margin-top:var(--s-5)}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--ink-2);background:var(--panel);border:1px solid var(--line);padding:5px 10px;border-radius:var(--r-pill)}
+.tag b{color:var(--accent);font-weight:500}
+
+/* top bar */
+.topbar{position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px clamp(var(--s-5),6vw,var(--s-9));background:color-mix(in srgb,var(--paper) 82%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.topbar .where{font-family:var(--mono);font-size:12px;color:var(--muted)}
+.topbar .where b{color:var(--ink);font-weight:500}
+.toggle{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line-strong);background:var(--panel);border-radius:var(--r-pill);padding:6px 12px;font-size:13px;font-weight:500;box-shadow:var(--e-1);transition:border-color var(--fast) var(--ease),transform var(--fast) var(--ease)}
+.toggle:hover{border-color:var(--accent)}
+.toggle:active{transform:scale(.97)}
+.toggle .dot{width:8px;height:8px;border-radius:50%;background:var(--accent)}
+
+/* ---- Generic layout helpers ---------------------------------- */
+.grid{display:grid;gap:var(--s-4)}
+.g-2{grid-template-columns:repeat(2,1fr)} .g-3{grid-template-columns:repeat(3,1fr)} .g-4{grid-template-columns:repeat(4,1fr)}
+@media(max-width:820px){.g-2,.g-3,.g-4{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.g-2,.g-3,.g-4{grid-template-columns:1fr}}
+.row{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.stack{display:flex;flex-direction:column;gap:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:var(--s-5);box-shadow:var(--e-1)}
+
+/* spec label under a demo */
+.spec{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:10px;letter-spacing:.02em}
+.spec b{color:var(--ink-2);font-weight:500}
+
+/* ============================================================
+   FOUNDATIONS
+   ============================================================ */
+/* color */
+.swatches{display:grid;grid-template-columns:repeat(auto-fill,minmax(132px,1fr));gap:12px}
+.sw{border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;background:var(--panel);cursor:pointer;transition:transform var(--fast) var(--ease),box-shadow var(--fast) var(--ease)}
+.sw:hover{transform:translateY(-2px);box-shadow:var(--e-3)}
+.sw .chip{height:66px}
+.sw .meta{padding:8px 10px}
+.sw .meta .name{font-size:12.5px;font-weight:500}
+.sw .meta .val{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:1px}
+.scale{display:grid;grid-template-columns:repeat(10,1fr);border-radius:var(--r-md);overflow:hidden;border:1px solid var(--line)}
+.scale div{height:56px;display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font-family:var(--mono);font-size:10px;cursor:pointer}
+
+/* typography specimen */
+.type-row{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:baseline;padding:14px 0;border-bottom:1px solid var(--line)}
+.type-row:last-child{border-bottom:0}
+.type-row .m{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.6}
+.type-row .m b{color:var(--ink-2);display:block;font-weight:500;font-size:12px;margin-bottom:2px}
+.sp-serif{font-family:var(--serif)} .sp-sans{font-family:var(--sans)} .sp-mono{font-family:var(--mono)}
+
+/* spacing */
+.space-row{display:flex;align-items:center;gap:16px;padding:6px 0}
+.space-row .bar{height:16px;background:var(--accent);border-radius:3px}
+.space-row .lab{font-family:var(--mono);font-size:12px;color:var(--muted);width:120px}
+.space-row .lab b{color:var(--ink);font-weight:500}
+
+/* radius + elevation demo boxes */
+.demo-boxes{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px}
+.demo-box{aspect-ratio:1.4;background:var(--panel);border:1px solid var(--line);display:flex;align-items:flex-end;justify-content:center;padding:8px;font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+/* ============================================================
+   ATOMS — controls
+   ============================================================ */
+.btn{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-weight:500;font-size:14px;line-height:1;border:1px solid transparent;border-radius:var(--r-md);padding:10px 16px;transition:background var(--fast) var(--ease),border-color var(--fast) var(--ease),transform var(--fast) var(--ease),box-shadow var(--fast) var(--ease)}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn-primary{background:var(--accent);color:#fff;box-shadow:var(--e-1)}
+.btn-primary:hover{background:var(--accent-ink)}
+.btn-secondary{background:var(--panel);color:var(--ink);border-color:var(--line-strong)}
+.btn-secondary:hover{border-color:var(--accent);color:var(--accent-ink)}
+.btn-ghost{background:transparent;color:var(--ink-2)}
+.btn-ghost:hover{background:var(--surface);color:var(--ink)}
+.btn-danger{background:var(--error);color:#fff}
+.btn-danger:hover{filter:brightness(.94)}
+.btn-sm{padding:6px 12px;font-size:13px;border-radius:var(--r-sm)}
+.btn-lg{padding:13px 22px;font-size:15px}
+.btn[disabled]{opacity:.45;pointer-events:none}
+
+.field{display:flex;flex-direction:column;gap:6px;max-width:320px}
+.field label{font-size:13px;font-weight:500;color:var(--ink-2)}
+.field .req{color:var(--error)}
+.input{font-family:var(--sans);font-size:14px;color:var(--ink);background:var(--panel);border:1px solid var(--line-strong);border-radius:var(--r-md);padding:10px 12px;transition:border-color var(--fast) var(--ease),box-shadow var(--fast) var(--ease);width:100%}
+.input::placeholder{color:var(--faint)}
+.input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.input.err{border-color:var(--error);box-shadow:0 0 0 3px var(--error-soft)}
+.field .hint{font-size:12px;color:var(--muted)}
+.field .msg{font-size:12px;color:var(--error);display:flex;align-items:center;gap:5px}
+.select{appearance:none;background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'><path d='M2 4l4 4 4-4' stroke='%238A8175' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/></svg>");background-repeat:no-repeat;background-position:right 12px center;padding-right:34px}
+
+.search{position:relative;max-width:320px}
+.search svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--muted)}
+.search .input{padding-left:36px}
+
+/* toggles */
+.switch{position:relative;width:40px;height:23px;flex:none}
+.switch input{position:absolute;opacity:0;width:100%;height:100%;margin:0;cursor:pointer}
+.switch .track{position:absolute;inset:0;background:var(--n-300);border-radius:var(--r-pill);transition:background var(--fast) var(--ease)}
+.switch .thumb{position:absolute;top:3px;left:3px;width:17px;height:17px;background:#fff;border-radius:50%;box-shadow:var(--e-1);transition:transform var(--base) var(--ease)}
+.switch input:checked ~ .track{background:var(--accent)}
+.switch input:checked ~ .thumb{transform:translateX(17px)}
+.check{display:inline-flex;align-items:center;gap:9px;font-size:14px;cursor:pointer}
+.check .box{width:18px;height:18px;border:1.5px solid var(--line-strong);border-radius:5px;display:grid;place-items:center;transition:all var(--fast) var(--ease)}
+.check input{display:none}
+.check input:checked ~ .box{background:var(--accent);border-color:var(--accent)}
+.check .box svg{opacity:0;transition:opacity var(--fast) var(--ease)}
+.check input:checked ~ .box svg{opacity:1}
+.radio .box{border-radius:50%}
+.radio input:checked ~ .box{background:radial-gradient(circle,#fff 33%,var(--accent) 36%)}
+
+/* chips / status */
+.chip-badge{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;padding:4px 10px;border-radius:var(--r-pill);border:1px solid transparent;line-height:1.4}
+.chip-badge .led{width:6px;height:6px;border-radius:50%;background:currentColor}
+.st-draft{color:var(--n-600);background:var(--surface);border-color:var(--line-strong)}
+.st-active{color:var(--success);background:var(--success-soft)}
+.st-paused{color:var(--warning);background:var(--warning-soft)}
+.st-completed{color:var(--info);background:var(--info-soft)}
+.st-archived{color:var(--muted);background:transparent;border-color:var(--line-strong)}
+.badge-count{display:inline-grid;place-items:center;min-width:20px;height:20px;padding:0 6px;font-family:var(--mono);font-size:11px;font-weight:500;color:#fff;background:var(--accent);border-radius:var(--r-pill)}
+
+.avatar{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:600;font-size:14px;color:#fff;background:var(--accent);flex:none}
+.avatar.a2{background:var(--success)} .avatar.a3{background:var(--warning)} .avatar.a4{background:var(--error)}
+
+.link-a{color:var(--accent);font-weight:500;border-bottom:1px solid color-mix(in srgb,var(--accent) 35%,transparent);transition:border-color var(--fast) var(--ease)}
+.link-a:hover{border-color:var(--accent)}
+
+.spinner{width:22px;height:22px;border:2.5px solid var(--line-strong);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.bar-loader{height:4px;width:180px;background:var(--surface);border-radius:2px;overflow:hidden}
+.bar-loader i{display:block;height:100%;width:40%;background:var(--accent);border-radius:2px;animation:slide 1.2s var(--ease) infinite}
+@keyframes slide{0%{transform:translateX(-100%)}100%{transform:translateX(350%)}}
+
+/* ============================================================
+   MOLECULES
+   ============================================================ */
+.statcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--e-1);transition:box-shadow var(--fast) var(--ease),transform var(--fast) var(--ease)}
+.statcard:hover{box-shadow:var(--e-3);transform:translateY(-2px)}
+.statcard .top{display:flex;justify-content:space-between;align-items:flex-start}
+.statcard .ico{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent-ink)}
+[data-theme="dark"] .statcard .ico{color:var(--accent-hi)}
+.statcard .k{all:unset;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.statcard .v{font-family:var(--serif);font-weight:600;font-size:30px;letter-spacing:-.02em;margin-top:12px;line-height:1}
+.statcard .d{display:inline-flex;align-items:center;gap:5px;margin-top:10px;font-size:12.5px;font-weight:500}
+.trend-up{color:var(--success)} .trend-down{color:var(--error)}
+
+.inforow{display:flex;justify-content:space-between;gap:16px;padding:11px 0;border-bottom:1px solid var(--line)}
+.inforow:last-child{border-bottom:0}
+.inforow .lab{color:var(--muted);font-size:13.5px}
+.inforow .val{font-weight:500;font-size:14px}
+
+.alert{display:flex;gap:12px;padding:13px 15px;border-radius:var(--r-md);border:1px solid;font-size:13.5px;align-items:flex-start}
+.alert .ico{flex:none;margin-top:1px}
+.alert b{font-weight:600}
+.al-success{background:var(--success-soft);border-color:color-mix(in srgb,var(--success) 30%,transparent);color:var(--success)}
+.al-warning{background:var(--warning-soft);border-color:color-mix(in srgb,var(--warning) 30%,transparent);color:var(--warning)}
+.al-error{background:var(--error-soft);border-color:color-mix(in srgb,var(--error) 30%,transparent);color:var(--error)}
+.al-info{background:var(--info-soft);border-color:color-mix(in srgb,var(--info) 30%,transparent);color:var(--info)}
+.alert p{color:var(--ink-2);margin-top:2px}
+
+.crumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted)}
+.crumb a:hover{color:var(--accent)}
+.crumb .sep{color:var(--faint)}
+.crumb .cur{color:var(--ink);font-weight:500}
+
+.pager{display:inline-flex;align-items:center;gap:4px}
+.pager button{min-width:34px;height:34px;padding:0 10px;border:1px solid var(--line);background:var(--panel);border-radius:var(--r-sm);font-size:13px;color:var(--ink-2);transition:all var(--fast) var(--ease)}
+.pager button:hover{border-color:var(--accent);color:var(--accent-ink)}
+.pager button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.pager button[disabled]{opacity:.4;pointer-events:none}
+
+.tip-wrap{position:relative;display:inline-block}
+.tip{position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%);background:var(--n-900);color:var(--n-50);font-size:12px;padding:6px 10px;border-radius:6px;white-space:nowrap;box-shadow:var(--e-3)}
+.tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:var(--n-900)}
+
+/* ============================================================
+   ORGANISMS
+   ============================================================ */
+/* data table */
+.dt{width:100%;border-collapse:separate;border-spacing:0;font-size:13.5px}
+.dt thead th{text-align:left;font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:500;padding:11px 14px;border-bottom:1px solid var(--line-strong);white-space:nowrap}
+.dt tbody td{padding:13px 14px;border-bottom:1px solid var(--line)}
+.dt tbody tr{transition:background var(--fast) var(--ease)}
+.dt tbody tr:hover{background:var(--surface)}
+.dt tbody tr:last-child td{border-bottom:0}
+.dt .num{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+.dt .name{font-weight:500;color:var(--ink)}
+.table-wrap{border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:var(--panel)}
+.table-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.table-toolbar h4{font-family:var(--serif);font-weight:600;font-size:17px}
+
+/* chart card */
+.chartcard{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);padding:20px;box-shadow:var(--e-1)}
+.chartcard .head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px}
+.chartcard .title{font-family:var(--serif);font-weight:600;font-size:17px}
+.chartcard .sub{font-size:12.5px;color:var(--muted);margin-top:2px}
+.spark{width:100%;height:120px;display:block}
+.bars{display:flex;align-items:flex-end;gap:10px;height:120px}
+.bars .b{flex:1;background:linear-gradient(var(--accent),color-mix(in srgb,var(--accent) 55%,transparent));border-radius:5px 5px 0 0;position:relative;min-width:8px;transition:filter var(--fast) var(--ease)}
+.bars .b:hover{filter:brightness(1.08)}
+.legend{display:flex;gap:16px;margin-top:14px;flex-wrap:wrap}
+.legend span{display:inline-flex;align-items:center;gap:6px;font-size:12px;color:var(--muted)}
+.legend i{width:10px;height:10px;border-radius:3px;display:inline-block}
+
+/* empty / error state */
+.state{text-align:center;padding:var(--s-7) var(--s-5);border:1px dashed var(--line-strong);border-radius:var(--r-lg);background:var(--panel)}
+.state .glyph{width:52px;height:52px;border-radius:14px;display:grid;place-items:center;margin:0 auto 14px;background:var(--surface);color:var(--muted)}
+.state h4{font-family:var(--serif);font-weight:600;font-size:19px;margin-bottom:6px}
+.state p{color:var(--muted);font-size:14px;max-width:40ch;margin:0 auto 18px}
+
+/* modal / confirm dialog */
+.modal-demo{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-lg);padding:var(--s-6);display:grid;place-items:center;min-height:280px;overflow:hidden}
+.modal-demo::before{content:"";position:absolute;inset:0;background:rgba(23,21,15,.28);backdrop-filter:blur(1px)}
+[data-theme="dark"] .modal-demo::before{background:rgba(0,0,0,.5)}
+.dialog{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--e-4);padding:var(--s-5);max-width:400px;width:100%}
+.dialog .dico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:var(--error-soft);color:var(--error);margin-bottom:14px}
+.dialog h4{font-family:var(--serif);font-weight:600;font-size:19px;margin-bottom:6px}
+.dialog p{color:var(--ink-2);font-size:14px;margin-bottom:20px}
+.dialog .acts{display:flex;justify-content:flex-end;gap:10px}
+
+/* app chrome demos */
+.chrome-top{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 18px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md)}
+.chrome-top .left{display:flex;align-items:center;gap:14px}
+.chrome-nav{display:flex;flex-direction:column;gap:2px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);padding:10px;max-width:230px}
+.chrome-nav a{display:flex;align-items:center;gap:11px;padding:9px 11px;border-radius:var(--r-sm);color:var(--ink-2);font-size:14px;font-weight:500}
+.chrome-nav a:hover{background:var(--surface)}
+.chrome-nav a.on{background:var(--accent-soft);color:var(--accent-ink)}
+[data-theme="dark"] .chrome-nav a.on{color:var(--accent-hi)}
+.chrome-nav .ic{width:18px;height:18px;flex:none;opacity:.85}
+
+/* ============================================================
+   TEMPLATES (wireframes)
+   ============================================================ */
+.wire{border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:var(--panel);box-shadow:var(--e-1)}
+.wire .bar{background:var(--surface);border-bottom:1px solid var(--line)}
+.wf-dash{display:grid;grid-template-columns:56px 1fr;min-height:280px}
+.wf-side{background:var(--surface);border-right:1px solid var(--line);display:flex;flex-direction:column;align-items:center;gap:10px;padding:14px 0}
+.wf-dot{width:22px;height:22px;border-radius:7px;background:var(--line-strong)}
+.wf-dot.act{background:var(--accent)}
+.wf-main{padding:16px;display:flex;flex-direction:column;gap:12px}
+.wf-topbar{height:16px;border-radius:5px;background:var(--surface);width:60%}
+.wf-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.wf-cards div{height:52px;border-radius:8px;background:var(--surface);border:1px solid var(--line)}
+.wf-charts{display:grid;grid-template-columns:2fr 1fr;gap:10px}
+.wf-charts div{height:90px;border-radius:8px;background:var(--surface);border:1px solid var(--line)}
+.wf-list .wf-charts,.wf-detail .wf-charts{grid-template-columns:1fr}
+.wf-tag{position:absolute;top:8px;right:10px;font-family:var(--mono);font-size:10px;color:var(--muted)}
+.wire{position:relative}
+
+/* ============================================================
+   USAGE — do / don't
+   ============================================================ */
+.dd{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.dd{grid-template-columns:1fr}}
+.dd .card{border:1px solid var(--line);border-radius:var(--r-md);padding:16px 18px;background:var(--panel)}
+.dd .card h5{display:flex;align-items:center;gap:8px;font-size:13px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;margin-bottom:10px}
+.dd .do h5{color:var(--success)} .dd .dont h5{color:var(--error)}
+.dd ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:13.5px;line-height:1.75}
+
+/* principles */
+.prin{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden}
+@media(max-width:640px){.prin{grid-template-columns:1fr}}
+.prin .p{background:var(--panel);padding:22px 24px}
+.prin .p .n{font-family:var(--serif);font-style:italic;font-size:15px;color:var(--accent)}
+.prin .p h4{font-family:var(--serif);font-weight:600;font-size:19px;margin:8px 0 6px;letter-spacing:-.01em}
+.prin .p p{color:var(--ink-2);font-size:14px}
+
+/* footer */
+.foot{border-top:1px solid var(--line);padding:var(--s-7) 0 var(--s-5);color:var(--muted);font-size:13px}
+.foot .map{font-family:var(--mono);font-size:12px;color:var(--ink-2);background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:16px;overflow-x:auto}
+.foot .map b{color:var(--accent)}
+
+/* copy toast */
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--n-900);color:var(--n-50);font-size:13px;font-weight:500;padding:10px 18px;border-radius:var(--r-pill);box-shadow:var(--e-4);opacity:0;pointer-events:none;transition:opacity var(--base) var(--ease),transform var(--base) var(--ease);z-index:100;display:flex;align-items:center;gap:8px}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#toast .dot{width:7px;height:7px;border-radius:50%;background:var(--accent-hi)}
+
+.hint-copy{font-family:var(--mono);font-size:11px;color:var(--faint);cursor:pointer}
+.hint-copy:hover{color:var(--accent)}
+
+/* ============================================================
+   EXTENDED LIBRARY — Overlays, forms, dataviz, structure
+   ============================================================ */
+
+/* ---- 17 · Tabs ---- */
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--line)}
+.tabs button{position:relative;padding:11px 16px;font-size:14px;font-weight:500;color:var(--muted);background:none;border:none;transition:color var(--fast) var(--ease)}
+.tabs button:hover{color:var(--ink)}
+.tabs button.on{color:var(--accent-ink)}
+[data-theme="dark"] .tabs button.on{color:var(--accent-hi)}
+.tabs button.on::after{content:"";position:absolute;left:12px;right:12px;bottom:-1px;height:2px;background:var(--accent);border-radius:2px}
+.tabpanel{padding:18px 2px;font-size:14px;color:var(--ink-2)}
+.tabpanel[hidden]{display:none}
+
+/* ---- 17 · Segmented control ---- */
+.segmented{display:inline-flex;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:3px;gap:2px}
+.segmented button{padding:6px 14px;font-size:13px;font-weight:500;color:var(--muted);background:none;border:none;border-radius:var(--r-sm);transition:all var(--fast) var(--ease)}
+.segmented button:hover{color:var(--ink)}
+.segmented button.on{background:var(--panel);color:var(--accent-ink);box-shadow:var(--e-1)}
+[data-theme="dark"] .segmented button.on{color:var(--accent-hi)}
+
+/* ---- 17 · Dropdown menu / popover ---- */
+.menu-wrap{position:relative;display:inline-block}
+.menu{position:absolute;top:calc(100% + 6px);left:0;min-width:200px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:var(--e-3);padding:6px;z-index:30;opacity:0;transform:translateY(-6px);pointer-events:none;transition:opacity var(--fast) var(--ease),transform var(--fast) var(--ease)}
+.menu-wrap.open .menu{opacity:1;transform:none;pointer-events:auto}
+.menu a,.menu button{display:flex;align-items:center;gap:10px;width:100%;padding:8px 10px;font-size:13.5px;color:var(--ink-2);border-radius:var(--r-sm);background:none;border:none;text-align:left;transition:background var(--fast) var(--ease)}
+.menu a:hover,.menu button:hover{background:var(--surface);color:var(--ink)}
+.menu .div{height:1px;background:var(--line);margin:6px 4px}
+.menu .danger{color:var(--error)}
+.popover{position:relative;max-width:280px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:var(--e-3);padding:14px 16px;font-size:13.5px;color:var(--ink-2)}
+.popover .caret{position:absolute;top:-6px;left:22px;width:11px;height:11px;background:var(--panel);border-left:1px solid var(--line);border-top:1px solid var(--line);transform:rotate(45deg)}
+.popover h5{font-weight:600;color:var(--ink);margin-bottom:4px}
+
+/* ---- 17 · Drawer / slide-over ---- */
+.drawer-demo{position:relative;height:300px;border:1px solid var(--line);border-radius:var(--r-lg);overflow:hidden;background:var(--surface)}
+.drawer-scrim{position:absolute;inset:0;background:rgba(23,21,15,.28);opacity:0;pointer-events:none;transition:opacity var(--base) var(--ease)}
+[data-theme="dark"] .drawer-scrim{background:rgba(0,0,0,.5)}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:min(340px,80%);background:var(--panel);border-left:1px solid var(--line);box-shadow:var(--e-4);transform:translateX(100%);transition:transform var(--base) var(--ease);display:flex;flex-direction:column}
+.drawer-demo.open .drawer{transform:none}
+.drawer-demo.open .drawer-scrim{opacity:1;pointer-events:auto}
+.drawer .dh{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px solid var(--line)}
+.drawer .dh b{font-family:var(--serif);font-weight:600;font-size:17px}
+.drawer .db{padding:18px;overflow-y:auto;flex:1}
+.iconbtn{width:32px;height:32px;display:grid;place-items:center;border:1px solid transparent;border-radius:var(--r-sm);background:none;color:var(--muted);transition:all var(--fast) var(--ease)}
+.iconbtn:hover{background:var(--surface);color:var(--ink)}
+
+/* ---- 17 · Command palette ---- */
+.cmdk-demo{position:relative;min-height:300px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--surface);display:grid;place-items:start center;padding-top:40px;overflow:hidden}
+.cmdk-demo::before{content:"";position:absolute;inset:0;background:rgba(23,21,15,.22);opacity:0;transition:opacity var(--base) var(--ease)}
+.cmdk-demo.open::before{opacity:1}
+.cmdk{position:relative;z-index:2;width:min(460px,90%);background:var(--panel);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--e-4);overflow:hidden;transform:translateY(-8px) scale(.98);opacity:0;transition:all var(--base) var(--ease)}
+.cmdk-demo.open .cmdk{transform:none;opacity:1}
+.cmdk .cin{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--line)}
+.cmdk .cin input{flex:1;border:none;background:none;font-size:15px;color:var(--ink);outline:none}
+.cmdk .cin kbd{font-family:var(--mono);font-size:10px;color:var(--muted);border:1px solid var(--line);border-radius:4px;padding:2px 5px}
+.cmdk .clist{padding:8px;max-height:200px;overflow-y:auto}
+.cmdk .cgrp{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:8px 10px 4px}
+.cmdk .ci{display:flex;align-items:center;gap:12px;padding:9px 10px;border-radius:var(--r-sm);font-size:14px;color:var(--ink-2);cursor:pointer}
+.cmdk .ci:hover,.cmdk .ci.sel{background:var(--accent-soft);color:var(--accent-ink)}
+[data-theme="dark"] .cmdk .ci:hover,[data-theme="dark"] .cmdk .ci.sel{color:var(--accent-hi)}
+.cmdk .ci svg{opacity:.7}
+
+/* ---- 18 · Combobox / autocomplete ---- */
+.combo{position:relative;max-width:320px}
+.combo .opts{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);box-shadow:var(--e-3);padding:5px;z-index:20;max-height:180px;overflow-y:auto}
+.combo .opts[hidden]{display:none}
+.combo .opts div{padding:8px 10px;font-size:14px;border-radius:var(--r-sm);cursor:pointer;color:var(--ink-2)}
+.combo .opts div:hover,.combo .opts div.sel{background:var(--surface);color:var(--ink)}
+.combo .opts mark{background:var(--accent-soft);color:var(--accent-ink);border-radius:3px;padding:0 1px}
+
+/* ---- 18 · Multi-select tag input ---- */
+.tagfield{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:7px 8px;border:1px solid var(--line-strong);border-radius:var(--r-md);background:var(--panel);max-width:420px;cursor:text}
+.tagfield:focus-within{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.tagfield .t{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent-ink);font-size:12.5px;font-weight:500;padding:3px 6px 3px 9px;border-radius:var(--r-sm)}
+[data-theme="dark"] .tagfield .t{color:var(--accent-hi)}
+.tagfield .t button{background:none;border:none;color:inherit;opacity:.6;display:grid;place-items:center;padding:0}
+.tagfield .t button:hover{opacity:1}
+.tagfield input{flex:1;min-width:80px;border:none;outline:none;background:none;font-size:14px;color:var(--ink);padding:4px}
+
+/* ---- 18 · Mini calendar / range ---- */
+.cal{width:250px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-md);padding:14px;box-shadow:var(--e-1)}
+.cal .ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.cal .ch b{font-weight:600;font-size:14px}
+.cal .grid7{display:grid;grid-template-columns:repeat(7,1fr);gap:2px}
+.cal .grid7 span{aspect-ratio:1;display:grid;place-items:center;font-size:12px;color:var(--ink-2);border-radius:6px;cursor:pointer}
+.cal .grid7 .wd{color:var(--faint);font-family:var(--mono);font-size:10px;cursor:default}
+.cal .grid7 span.mut{color:var(--faint)}
+.cal .grid7 span:hover:not(.wd){background:var(--surface)}
+.cal .grid7 span.in{background:var(--accent-soft)}
+.cal .grid7 span.end{background:var(--accent);color:#fff}
+
+/* ---- 18 · Stepper / wizard ---- */
+.stepper{display:flex;align-items:center;gap:0}
+.stepper .st{display:flex;align-items:center;gap:10px;flex:1}
+.stepper .st:last-child{flex:none}
+.stepper .dot{width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:600;font-family:var(--mono);background:var(--surface);border:1.5px solid var(--line-strong);color:var(--muted);flex:none}
+.stepper .st.done .dot{background:var(--accent);border-color:var(--accent);color:#fff}
+.stepper .st.now .dot{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-soft)}
+[data-theme="dark"] .stepper .st.now .dot{color:var(--accent-hi)}
+.stepper .lab{font-size:13px;font-weight:500;color:var(--muted);white-space:nowrap}
+.stepper .st.now .lab,.stepper .st.done .lab{color:var(--ink)}
+.stepper .line{flex:1;height:1.5px;background:var(--line-strong);margin:0 10px}
+.stepper .st.done .line{background:var(--accent)}
+
+/* ---- 18 · Slider ---- */
+.slider{-webkit-appearance:none;appearance:none;width:100%;max-width:320px;height:5px;border-radius:3px;background:linear-gradient(90deg,var(--accent) var(--fill,55%),var(--line-strong) var(--fill,55%));outline:none}
+.slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--panel);border:2px solid var(--accent);box-shadow:var(--e-2);cursor:pointer;transition:transform var(--fast) var(--ease)}
+.slider::-webkit-slider-thumb:active{transform:scale(1.15)}
+.slider::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:var(--panel);border:2px solid var(--accent);cursor:pointer}
+.slider-val{font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+
+/* ---- 18 · Dropzone ---- */
+.dropzone{border:1.5px dashed var(--line-strong);border-radius:var(--r-lg);padding:var(--s-6);text-align:center;background:var(--panel);transition:all var(--fast) var(--ease);cursor:pointer}
+.dropzone:hover,.dropzone.drag{border-color:var(--accent);background:var(--accent-soft)}
+.dropzone .dzico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;margin:0 auto 12px;background:var(--surface);color:var(--accent)}
+.dropzone b{font-weight:600;font-size:14px}
+.dropzone span{display:block;font-size:12.5px;color:var(--muted);margin-top:4px}
+.upfile{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--panel);margin-top:10px}
+.upfile .thumb{width:36px;height:36px;border-radius:8px;background:var(--accent-soft);color:var(--accent-ink);display:grid;place-items:center;flex:none}
+.upfile .info{flex:1;min-width:0}
+.upfile .info b{font-size:13.5px;font-weight:500;display:block}
+.upfile .info .pbar{height:4px;background:var(--surface);border-radius:2px;margin-top:6px;overflow:hidden}
+.upfile .info .pbar i{display:block;height:100%;background:var(--accent);border-radius:2px}
+
+/* ---- 19 · Progress / meter ---- */
+.meter{max-width:360px}
+.meter .mh{display:flex;justify-content:space-between;font-size:13px;margin-bottom:7px}
+.meter .mh b{font-weight:600} .meter .mh .pct{font-family:var(--mono);color:var(--muted)}
+.meter .track{height:9px;background:var(--surface);border-radius:var(--r-pill);overflow:hidden}
+.meter .track i{display:block;height:100%;border-radius:var(--r-pill);background:var(--accent);transition:width var(--slow) var(--ease)}
+.meter .track i.warn{background:var(--warning)} .meter .track i.danger{background:var(--error)}
+.ring{--p:72;--c:var(--accent);width:104px;height:104px;border-radius:50%;background:conic-gradient(var(--c) calc(var(--p)*1%),var(--surface) 0);display:grid;place-items:center;flex:none}
+.ring::before{content:"";position:absolute;width:76px;height:76px;border-radius:50%;background:var(--panel)}
+.ring b{position:relative;font-family:var(--serif);font-weight:600;font-size:22px}
+.ring-wrap{position:relative;display:inline-grid;place-items:center}
+
+/* ---- 19 · KPI delta ---- */
+.kpi{display:flex;align-items:flex-end;gap:16px}
+.kpi .big{font-family:var(--serif);font-weight:600;font-size:44px;letter-spacing:-.02em;line-height:1;font-variant-numeric:tabular-nums}
+.kpi .cmp{padding-bottom:6px}
+.kpi .delta{display:inline-flex;align-items:center;gap:4px;font-size:14px;font-weight:600}
+.kpi .prev{font-size:12px;color:var(--muted);font-family:var(--mono);margin-top:2px}
+
+/* ---- 19 · Funnel ---- */
+.funnel{display:flex;flex-direction:column;gap:6px;max-width:420px}
+.funnel .fr{display:flex;align-items:center;gap:14px}
+.funnel .fbar{height:42px;border-radius:var(--r-sm);background:linear-gradient(90deg,var(--accent),var(--accent-hi));display:flex;align-items:center;padding:0 14px;color:#fff;font-weight:600;font-size:14px;font-variant-numeric:tabular-nums;min-width:60px}
+.funnel .fr:nth-child(2) .fbar{background:linear-gradient(90deg,#3556e0,#5471ea)}
+.funnel .fr:nth-child(3) .fbar{background:linear-gradient(90deg,var(--success),#2a9d92)}
+.funnel .fmeta{font-size:12.5px;color:var(--muted);white-space:nowrap}
+.funnel .fmeta b{color:var(--ink);font-weight:600}
+
+/* ---- 19 · Heatmap ---- */
+.heat{display:grid;grid-template-columns:auto repeat(12,1fr);gap:3px;font-size:10px}
+.heat .hl{font-family:var(--mono);color:var(--muted);display:flex;align-items:center;padding-right:6px;justify-content:flex-end}
+.heat .hc{aspect-ratio:1;border-radius:3px;background:var(--accent);cursor:pointer;transition:transform var(--fast) var(--ease)}
+.heat .hc:hover{transform:scale(1.25);z-index:2}
+.heat-legend{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);margin-top:12px}
+.heat-legend .sc{width:14px;height:14px;border-radius:3px}
+
+/* ---- 19 · Geo distribution ---- */
+.geo{display:flex;flex-direction:column;gap:10px;max-width:380px}
+.geo .gr{display:grid;grid-template-columns:34px 1fr auto;align-items:center;gap:12px}
+.geo .flag{font-size:18px}
+.geo .gbar{height:8px;border-radius:var(--r-pill);background:var(--surface);overflow:hidden}
+.geo .gbar i{display:block;height:100%;background:var(--accent);border-radius:var(--r-pill)}
+.geo .gv{font-family:var(--mono);font-size:12px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+
+/* ---- 19 · Realtime counter ---- */
+.live{display:inline-flex;flex-direction:column;gap:6px}
+.live .lt{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--success)}
+.live .pulse{width:8px;height:8px;border-radius:50%;background:var(--success);position:relative}
+.live .pulse::after{content:"";position:absolute;inset:0;border-radius:50%;background:var(--success);animation:pulse 1.6s var(--ease) infinite}
+@keyframes pulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(3);opacity:0}}
+.live .lv{font-family:var(--serif);font-weight:600;font-size:40px;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1}
+
+/* ---- 20 · Skeletons ---- */
+.sk{background:linear-gradient(100deg,var(--surface) 30%,var(--line) 50%,var(--surface) 70%);background-size:200% 100%;border-radius:6px;animation:shimmer 1.4s linear infinite}
+@keyframes shimmer{to{background-position:-200% 0}}
+.sk-line{height:11px;margin:8px 0}
+.sk-card{padding:18px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--panel)}
+
+/* ---- 20 · Accordion ---- */
+.acc{border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;background:var(--panel);max-width:560px}
+.acc .item{border-bottom:1px solid var(--line)}
+.acc .item:last-child{border-bottom:0}
+.acc .ah{display:flex;align-items:center;justify-content:space-between;width:100%;padding:14px 16px;background:none;border:none;font-size:14px;font-weight:500;color:var(--ink);text-align:left;transition:background var(--fast) var(--ease)}
+.acc .ah:hover{background:var(--surface)}
+.acc .ah svg{transition:transform var(--base) var(--ease);color:var(--muted);flex:none}
+.acc .item.open .ah svg{transform:rotate(180deg)}
+.acc .ab{max-height:0;overflow:hidden;transition:max-height var(--base) var(--ease)}
+.acc .item.open .ab{max-height:200px}
+.acc .ab p{padding:0 16px 16px;font-size:13.5px;color:var(--ink-2)}
+
+/* ---- 20 · Banner ---- */
+.banner{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:var(--r-md);font-size:13.5px;border:1px solid}
+.banner.b-info{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 25%,transparent);color:var(--accent-ink)}
+[data-theme="dark"] .banner.b-info{color:var(--accent-hi)}
+.banner.b-warn{background:var(--warning-soft);border-color:color-mix(in srgb,var(--warning) 28%,transparent);color:var(--warning)}
+.banner .bx{flex:1}.banner b{font-weight:600}
+.banner .close{background:none;border:none;color:inherit;opacity:.6;cursor:pointer;display:grid;place-items:center}
+.banner .close:hover{opacity:1}
+
+/* ---- 20 · Notification center ---- */
+.notif{max-width:380px;border:1px solid var(--line);border-radius:var(--r-lg);background:var(--panel);overflow:hidden;box-shadow:var(--e-1)}
+.notif .nh{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+.notif .nh b{font-family:var(--serif);font-weight:600;font-size:16px}
+.notif .ni{display:flex;gap:12px;padding:13px 16px;border-bottom:1px solid var(--line)}
+.notif .ni:last-child{border-bottom:0}
+.notif .ni.unread{background:var(--accent-soft)}
+[data-theme="dark"] .notif .ni.unread{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.notif .nd{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;flex:none}
+.notif .nb{flex:1;min-width:0}
+.notif .nb b{font-size:13.5px;font-weight:500}
+.notif .nb p{font-size:12.5px;color:var(--muted);margin-top:1px}
+.notif .nt{font-family:var(--mono);font-size:10px;color:var(--faint);white-space:nowrap}
+
+/* ---- 20 · Timeline ---- */
+.timeline{position:relative;padding-left:26px;max-width:440px}
+.timeline::before{content:"";position:absolute;left:8px;top:6px;bottom:6px;width:1.5px;background:var(--line)}
+.timeline .tv{position:relative;padding-bottom:20px}
+.timeline .tv:last-child{padding-bottom:0}
+.timeline .tv::before{content:"";position:absolute;left:-22px;top:3px;width:11px;height:11px;border-radius:50%;background:var(--panel);border:2px solid var(--line-strong)}
+.timeline .tv.on::before{background:var(--accent);border-color:var(--accent)}
+.timeline .tv.done::before{background:var(--success);border-color:var(--success)}
+.timeline .tt{font-size:13.5px;font-weight:600}
+.timeline .tm{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:1px}
+.timeline .td{font-size:13px;color:var(--ink-2);margin-top:4px}
+
+/* ---- 20 · Filter bar ---- */
+.filterbar{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:12px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--panel)}
+.filterbar .fchip{display:inline-flex;align-items:center;gap:7px;padding:6px 8px 6px 12px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-pill);font-size:13px}
+.filterbar .fchip .fk{color:var(--muted)} .filterbar .fchip .fv{font-weight:500}
+.filterbar .fchip button{background:none;border:none;color:var(--muted);cursor:pointer;display:grid;place-items:center;padding:0}
+.filterbar .fchip button:hover{color:var(--error)}
+.filterbar .addf{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px dashed var(--line-strong);border-radius:var(--r-pill);font-size:13px;color:var(--muted);background:none;cursor:pointer}
+.filterbar .addf:hover{border-color:var(--accent);color:var(--accent-ink)}
+
+/* ---- 17 · Base primitives ---- */
+.textspec{display:grid;grid-template-columns:180px 1fr;gap:16px;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--line)}
+.textspec:last-child{border-bottom:0}
+.textspec .m{font-family:var(--mono);font-size:11px;color:var(--muted);line-height:1.6}
+.textspec .m b{color:var(--ink-2);display:block;font-weight:500;font-size:12px;margin-bottom:3px}
+.cardc{border:1px solid var(--line);border-radius:var(--r-lg);background:var(--panel);overflow:hidden;box-shadow:var(--e-1)}
+.cardc .cch{padding:14px 16px;border-bottom:1px solid var(--line);font-family:var(--serif);font-weight:600;font-size:16px}
+.cardc .ccb{padding:16px;font-size:13.5px;color:var(--ink-2)}
+.cardc .ccf{padding:12px 16px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:8px;background:var(--surface)}
+.divx{border:none;border-top:1px solid var(--line);margin:18px 0}
+.divx.dashed{border-top-style:dashed}
+.divx.strong{border-top-color:var(--line-strong)}
+.iconset{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:10px}
+.iconset .ic{display:flex;flex-direction:column;align-items:center;gap:9px;padding:15px 8px;border:1px solid var(--line);border-radius:var(--r-md);background:var(--panel);color:var(--ink-2);font-family:var(--mono);font-size:10px;transition:all var(--fast) var(--ease)}
+.iconset .ic:hover{border-color:var(--accent);color:var(--accent-ink);transform:translateY(-2px)}
+[data-theme="dark"] .iconset .ic:hover{color:var(--accent-hi)}
+.lbox{background:var(--accent-soft);border:1px solid color-mix(in srgb,var(--accent) 22%,transparent);border-radius:var(--r-sm);padding:14px 10px;font-family:var(--mono);font-size:11px;color:var(--accent-ink);text-align:center}
+[data-theme="dark"] .lbox{color:var(--accent-hi)}
+.lbox.alt{background:var(--surface);border-color:var(--line);color:var(--muted)}
+
+/* ---- 18 · Core & common ---- */
+.pageheader{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;padding-bottom:18px;border-bottom:1px solid var(--line)}
+.pageheader .pt{font-family:var(--serif);font-weight:600;font-size:28px;letter-spacing:-.02em}
+.pageheader .ps{font-size:14px;color:var(--muted);margin-top:4px}
+.container-demo{border:1.5px dashed var(--line-strong);border-radius:var(--r-md);padding:14px}
+.container-demo .inner{max-width:460px;margin:0 auto;background:var(--surface);border-radius:var(--r-sm);padding:22px;text-align:center;font-family:var(--mono);font-size:11px;color:var(--muted)}
+.center-load{display:grid;place-items:center;gap:12px;padding:var(--s-6);border:1px solid var(--line);border-radius:var(--r-lg);background:var(--panel);color:var(--muted);font-size:13px}
+
+/* reveal on load */
+.section,.hero{animation:rise var(--slow) var(--ease) both}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+
+<!-- top bar -->
+<div class="topbar">
+  <div class="where">signal / <b id="whereat">foundations</b></div>
+  <button class="toggle" id="themeBtn" title="Toggle theme"><span class="dot"></span><span id="themeLbl">Light</span></button>
+</div>
+
+<div class="shell">
+  <!-- =============== SIDEBAR TOC =============== -->
+  <aside class="toc">
+    <div class="brand">
+      <div class="mark"></div>
+      <div><b>Signal</b><small>AdTech Design System</small></div>
+    </div>
+    <nav id="toc">
+      <a href="#principles"><span class="num">00</span>Principles</a>
+      <a href="#color"><span class="num">01</span>Color</a>
+      <a href="#type"><span class="num">02</span>Typography</a>
+      <a href="#space"><span class="num">03</span>Spacing &amp; grid</a>
+      <a href="#radius"><span class="num">04</span>Radius &amp; elevation</a>
+      <a href="#buttons"><span class="num">05</span>Buttons</a>
+      <a href="#inputs"><span class="num">06</span>Inputs &amp; forms</a>
+      <a href="#selection"><span class="num">07</span>Selection controls</a>
+      <a href="#status"><span class="num">08</span>Status &amp; badges</a>
+      <a href="#feedback"><span class="num">09</span>Feedback atoms</a>
+      <a href="#statcard"><span class="num">10</span>Stat cards</a>
+      <a href="#molecules"><span class="num">11</span>Molecules</a>
+      <a href="#table"><span class="num">12</span>Data table</a>
+      <a href="#chart"><span class="num">13</span>Chart card</a>
+      <a href="#states"><span class="num">14</span>States</a>
+      <a href="#dialog"><span class="num">15</span>Dialog</a>
+      <a href="#chrome"><span class="num">16</span>App chrome</a>
+      <a href="#base"><span class="num">17</span>Base primitives</a>
+      <a href="#core"><span class="num">18</span>Core &amp; common</a>
+      <a href="#overlays"><span class="num">19</span>Overlays &amp; nav</a>
+      <a href="#forms2"><span class="num">20</span>Advanced forms</a>
+      <a href="#dataviz"><span class="num">21</span>Data &amp; dataviz</a>
+      <a href="#structure"><span class="num">22</span>Feedback &amp; structure</a>
+      <a href="#templates"><span class="num">23</span>Templates</a>
+      <a href="#usage"><span class="num">24</span>Usage &amp; mapping</a>
+    </nav>
+  </aside>
+
+  <!-- =============== MAIN =============== -->
+  <main>
+    <!-- HERO -->
+    <header class="hero" id="top">
+      <div class="eyebrow">Design system · v1.0 · <span class="hint-copy" data-copy="#2340D9">click any token to copy →</span></div>
+      <h1 class="h-display">The language of<br><em>Signal.</em></h1>
+      <p class="lede">A production reference for the AdTech Dashboard front-end. Editorial precision meets data density — every token, atom and pattern here is the single source of truth. Build with these, not around them.</p>
+      <div class="hero-meta">
+        <span class="tag">Accent <b>#2340D9</b></span>
+        <span class="tag">Type <b>Fraunces · Geist</b></span>
+        <span class="tag">Grid <b>8px</b></span>
+        <span class="tag">Atomic <b>tokens → templates</b></span>
+        <span class="tag">React <b>+ MUI v7</b></span>
+      </div>
+    </header>
+
+    <!-- 00 PRINCIPLES -->
+    <section class="section" id="principles">
+      <div class="eyebrow">00 — Principles</div>
+      <h2 class="h-display">Four rules that hold it together</h2>
+      <div class="prin" style="margin-top:26px">
+        <div class="p"><div class="n">i.</div><h4>Data first, chrome second</h4><p>The interface disappears so the numbers speak. Restrained neutrals, one confident accent, generous whitespace around dense tables.</p></div>
+        <div class="p"><div class="n">ii.</div><h4>Tokens are law</h4><p>No magic hex, no one-off px. Every value comes from a token. Change the token, change the product — nowhere else.</p></div>
+        <div class="p"><div class="n">iii.</div><h4>Hierarchy through type</h4><p>Fraunces for moments that matter — titles, headline metrics. Geist for the working text. Weight and size, never colour alone.</p></div>
+        <div class="p"><div class="n">iv.</div><h4>Predictable, then delightful</h4><p>Consistent spacing and states first; motion and polish only where they clarify. Every interaction earns its keep.</p></div>
+      </div>
+    </section>
+
+    <!-- 01 COLOR -->
+    <section class="section" id="color">
+      <div class="eyebrow">01 — Color</div>
+      <h2 class="h-display">Warm neutrals, one cobalt signal</h2>
+      <p class="note">Click a swatch to copy its value. Semantic colours carry meaning — never decorate with them.</p>
+
+      <h3 class="subhead">Brand &amp; accent</h3>
+      <div class="swatches">
+        <div class="sw" data-copy="#2340D9"><div class="chip" style="background:#2340D9"></div><div class="meta"><div class="name">Accent</div><div class="val">#2340D9</div></div></div>
+        <div class="sw" data-copy="#1B33B0"><div class="chip" style="background:#1B33B0"></div><div class="meta"><div class="name">Accent · ink</div><div class="val">#1B33B0</div></div></div>
+        <div class="sw" data-copy="#EAEDFC"><div class="chip" style="background:#EAEDFC"></div><div class="meta"><div class="name">Accent · soft</div><div class="val">#EAEDFC</div></div></div>
+      </div>
+
+      <h3 class="subhead">Semantic</h3>
+      <div class="swatches">
+        <div class="sw" data-copy="#0F766E"><div class="chip" style="background:#0F766E"></div><div class="meta"><div class="name">Success</div><div class="val">#0F766E</div></div></div>
+        <div class="sw" data-copy="#B45309"><div class="chip" style="background:#B45309"></div><div class="meta"><div class="name">Warning</div><div class="val">#B45309</div></div></div>
+        <div class="sw" data-copy="#BE123C"><div class="chip" style="background:#BE123C"></div><div class="meta"><div class="name">Error</div><div class="val">#BE123C</div></div></div>
+        <div class="sw" data-copy="#0E7490"><div class="chip" style="background:#0E7490"></div><div class="meta"><div class="name">Info</div><div class="val">#0E7490</div></div></div>
+      </div>
+
+      <h3 class="subhead">Neutral scale · warm</h3>
+      <div class="scale">
+        <div data-copy="#FBFAF8" style="background:#FBFAF8;color:#8A8175">50</div>
+        <div data-copy="#F4F1EC" style="background:#F4F1EC;color:#8A8175">100</div>
+        <div data-copy="#E7E1D6" style="background:#E7E1D6;color:#6B6355">200</div>
+        <div data-copy="#D9D1C2" style="background:#D9D1C2;color:#514B3E">300</div>
+        <div data-copy="#B8AF9F" style="background:#B8AF9F;color:#211E18">400</div>
+        <div data-copy="#8A8175" style="background:#8A8175;color:#fff">500</div>
+        <div data-copy="#6B6355" style="background:#6B6355;color:#fff">600</div>
+        <div data-copy="#514B3E" style="background:#514B3E;color:#fff">700</div>
+        <div data-copy="#38332A" style="background:#38332A;color:#fff">800</div>
+        <div data-copy="#211E18" style="background:#211E18;color:#fff">900</div>
+      </div>
+      <p class="spec"><b>Surfaces</b> — paper <code>#FBFAF8</code> · surface <code>#F4F1EC</code> · panel <code>#FFFFFF</code> · line <code>#E7E1D6</code> · ink <code>#17150F</code> · muted <code>#8A8175</code></p>
+    </section>
+
+    <!-- 02 TYPOGRAPHY -->
+    <section class="section" id="type">
+      <div class="eyebrow">02 — Typography</div>
+      <h2 class="h-display">Fraunces for voice, Geist for work</h2>
+      <p class="note"><b class="sp-serif">Fraunces</b> (serif display) · <b class="sp-sans">Geist</b> (UI &amp; body) · <b class="sp-mono">Geist Mono</b> (tokens, numbers, code)</p>
+      <div class="panel" style="margin-top:20px">
+        <div class="type-row"><div class="m"><b>Display</b>Fraunces 600 · 56/1.05 · -.02em</div><div class="sp-serif" style="font-weight:600;font-size:48px;line-height:1.05;letter-spacing:-.02em">Campaign performance</div></div>
+        <div class="type-row"><div class="m"><b>H1</b>Fraunces 600 · 36px</div><div class="sp-serif" style="font-weight:600;font-size:36px;letter-spacing:-.02em">Overview &amp; insights</div></div>
+        <div class="type-row"><div class="m"><b>H2</b>Fraunces 600 · 30px</div><div class="sp-serif" style="font-weight:600;font-size:30px;letter-spacing:-.01em">Active campaigns</div></div>
+        <div class="type-row"><div class="m"><b>H3</b>Geist 600 · 24px</div><div class="sp-sans" style="font-weight:600;font-size:24px">Targeting settings</div></div>
+        <div class="type-row"><div class="m"><b>H4 / title</b>Geist 600 · 20px</div><div class="sp-sans" style="font-weight:600;font-size:20px">Device distribution</div></div>
+        <div class="type-row"><div class="m"><b>Body</b>Geist 400 · 15px · 1.6</div><div class="sp-sans" style="font-size:15px;max-width:52ch">Impressions are counted when an ad renders in the viewport. Clicks and conversions attribute back to the originating campaign within the reporting window.</div></div>
+        <div class="type-row"><div class="m"><b>Body · small</b>Geist 400 · 13.5px</div><div class="sp-sans" style="font-size:13.5px;color:var(--ink-2)">Secondary copy, helper text and dense table cells.</div></div>
+        <div class="type-row"><div class="m"><b>Overline</b>Geist Mono 500 · 11px · .16em</div><div class="sp-mono" style="font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)">Total spend · last 30 days</div></div>
+        <div class="type-row"><div class="m"><b>Numerals</b>Fraunces 600 · tabular</div><div class="sp-serif" style="font-weight:600;font-size:34px;letter-spacing:-.02em;font-variant-numeric:tabular-nums">$284,910.42</div></div>
+      </div>
+    </section>
+
+    <!-- 03 SPACING -->
+    <section class="section" id="space">
+      <div class="eyebrow">03 — Spacing &amp; grid</div>
+      <h2 class="h-display">Everything on an 8px rhythm</h2>
+      <p class="note">Steps derive from a 4/8 base. Use tokens <code>--s-1…--s-9</code>; avoid arbitrary values.</p>
+      <div class="panel" style="margin-top:20px">
+        <div class="space-row"><span class="lab"><b>--s-1</b> 4px</span><span class="bar" style="width:4px"></span></div>
+        <div class="space-row"><span class="lab"><b>--s-2</b> 8px</span><span class="bar" style="width:8px"></span></div>
+        <div class="space-row"><span class="lab"><b>--s-3</b> 12px</span><span class="bar" style="width:12px"></span></div>
+        <div class="space-row"><span class="lab"><b>--s-4</b> 16px</span><span class="bar" style="width:16px"></span></div>
+        <div class="space-row"><span class="lab"><b>--s-5</b> 24px</span><span class="bar" style="width:24px"></span></div>
+        <div class="space-row"><span class="lab"><b>--s-6</b> 32px</span><span class="bar" style="width:32px"></span></div>
+        <div class="space-row"><span class="lab"><b>--s-7</b> 48px</span><span class="bar" style="width:48px"></span></div>
+        <div class="space-row"><span class="lab"><b>--s-8</b> 64px</span><span class="bar" style="width:64px"></span></div>
+        <div class="space-row"><span class="lab"><b>--s-9</b> 96px</span><span class="bar" style="width:96px"></span></div>
+      </div>
+    </section>
+
+    <!-- 04 RADIUS + ELEVATION -->
+    <section class="section" id="radius">
+      <div class="eyebrow">04 — Radius &amp; elevation</div>
+      <h2 class="h-display">Soft edges, honest shadows</h2>
+      <h3 class="subhead">Corner radius</h3>
+      <div class="demo-boxes">
+        <div class="demo-box" style="border-radius:4px">xs · 4</div>
+        <div class="demo-box" style="border-radius:6px">sm · 6</div>
+        <div class="demo-box" style="border-radius:10px">md · 10</div>
+        <div class="demo-box" style="border-radius:14px">lg · 14</div>
+        <div class="demo-box" style="border-radius:20px">xl · 20</div>
+        <div class="demo-box" style="border-radius:999px">pill</div>
+      </div>
+      <h3 class="subhead">Elevation</h3>
+      <div class="demo-boxes">
+        <div class="demo-box" style="box-shadow:var(--e-1);border-color:transparent">e-1 · subtle</div>
+        <div class="demo-box" style="box-shadow:var(--e-2);border-color:transparent">e-2 · card</div>
+        <div class="demo-box" style="box-shadow:var(--e-3);border-color:transparent">e-3 · pop</div>
+        <div class="demo-box" style="box-shadow:var(--e-4);border-color:transparent">e-4 · modal</div>
+      </div>
+    </section>
+
+    <!-- 05 BUTTONS -->
+    <section class="section" id="buttons">
+      <div class="eyebrow">05 — Atoms · Buttons</div>
+      <h2 class="h-display">Buttons</h2>
+      <div class="panel" style="margin-top:20px">
+        <div class="row"><button class="btn btn-primary">Create campaign</button><button class="btn btn-secondary">Cancel</button><button class="btn btn-ghost">View report</button><button class="btn btn-danger">Delete</button><button class="btn btn-primary" disabled>Disabled</button></div>
+        <p class="spec"><b>Variants</b> — primary · secondary · ghost · danger. One primary per view.</p>
+        <div class="row" style="margin-top:20px"><button class="btn btn-primary btn-sm">Small</button><button class="btn btn-primary">Medium</button><button class="btn btn-primary btn-lg">Large</button>
+          <button class="btn btn-primary"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>With icon</button></div>
+        <p class="spec"><b>Sizes</b> — sm 32px · md 40px · lg 48px. Icon 15–18px, gap 8px.</p>
+      </div>
+    </section>
+
+    <!-- 06 INPUTS -->
+    <section class="section" id="inputs">
+      <div class="eyebrow">06 — Atoms · Inputs &amp; forms</div>
+      <h2 class="h-display">Inputs &amp; the FormField molecule</h2>
+      <div class="grid g-3" style="margin-top:20px">
+        <div class="field"><label>Campaign name <span class="req">*</span></label><input class="input" placeholder="e.g. Summer push" value="Q3 Retargeting"/><span class="hint">Shown across reports.</span></div>
+        <div class="field"><label>Daily budget <span class="req">*</span></label><input class="input err" value="-40"/><span class="msg"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Must be greater than 0.</span></div>
+        <div class="field"><label>Objective</label><select class="input select"><option>Conversions</option><option>Traffic</option><option>Awareness</option></select></div>
+      </div>
+      <div class="row" style="margin-top:20px">
+        <div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input class="input" placeholder="Search campaigns…"/></div>
+        <div class="field" style="max-width:160px"><input class="input" type="date" value="2026-07-03"/></div>
+      </div>
+      <p class="spec"><b>FormField</b> = label + control + hint/error. Focus ring = 3px <code>--accent-soft</code>. Error ring = <code>--error-soft</code>.</p>
+    </section>
+
+    <!-- 07 SELECTION -->
+    <section class="section" id="selection">
+      <div class="eyebrow">07 — Atoms · Selection controls</div>
+      <h2 class="h-display">Toggles, checks &amp; radios</h2>
+      <div class="panel" style="margin-top:20px">
+        <div class="row" style="gap:28px">
+          <label class="check"><input type="checkbox" checked/><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Desktop</label>
+          <label class="check"><input type="checkbox"/><span class="box"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Mobile</label>
+          <label class="check radio"><input type="radio" name="r" checked/><span class="box"></span>All countries</label>
+          <label class="check radio"><input type="radio" name="r"/><span class="box"></span>Selected only</label>
+          <label class="check" style="gap:12px"><span class="switch"><input type="checkbox" checked/><span class="track"></span><span class="thumb"></span></span>Auto-optimize</label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 08 STATUS -->
+    <section class="section" id="status">
+      <div class="eyebrow">08 — Atoms · Status &amp; badges</div>
+      <h2 class="h-display">Campaign status &amp; badges</h2>
+      <div class="panel" style="margin-top:20px">
+        <div class="row" style="gap:10px">
+          <span class="chip-badge st-draft"><span class="led"></span>Draft</span>
+          <span class="chip-badge st-active"><span class="led"></span>Active</span>
+          <span class="chip-badge st-paused"><span class="led"></span>Paused</span>
+          <span class="chip-badge st-completed"><span class="led"></span>Completed</span>
+          <span class="chip-badge st-archived"><span class="led"></span>Archived</span>
+        </div>
+        <p class="spec"><b>StatusChip</b> — maps to the campaign lifecycle. Colour = semantic token, never arbitrary.</p>
+        <div class="row" style="margin-top:18px"><span class="badge-count">3</span><span class="badge-count" style="background:var(--error)">12</span><span class="badge-count" style="background:var(--n-500)">99+</span><span style="font-size:13px;color:var(--muted)">notification / count badges</span></div>
+      </div>
+    </section>
+
+    <!-- 09 FEEDBACK ATOMS -->
+    <section class="section" id="feedback">
+      <div class="eyebrow">09 — Atoms · Feedback</div>
+      <h2 class="h-display">Loading, avatars, links</h2>
+      <div class="panel" style="margin-top:20px">
+        <div class="row" style="gap:28px">
+          <div class="spinner"></div>
+          <div class="bar-loader"><i></i></div>
+          <div class="row" style="gap:-8px"><span class="avatar">AN</span><span class="avatar a2">BT</span><span class="avatar a3">CL</span><span class="avatar a4">VU</span></div>
+          <a class="link-a" href="#">View documentation</a>
+          <div class="tip-wrap"><button class="btn btn-secondary btn-sm">Hover me<span class="tip">CTR = clicks ÷ impressions</span></button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10 STATCARD -->
+    <section class="section" id="statcard">
+      <div class="eyebrow">10 — Molecule · Stat card</div>
+      <h2 class="h-display">Headline metrics</h2>
+      <div class="grid g-4" style="margin-top:20px">
+        <div class="statcard"><div class="top"><span class="k">Impressions</span><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg></span></div><div class="v">1.28M</div><div class="d trend-up"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>+12.4% vs last period</div></div>
+        <div class="statcard"><div class="top"><span class="k">Clicks</span><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 3v6l4-2 3 8-3 1-3-7-4 3z"/></svg></span></div><div class="v">48,921</div><div class="d trend-up"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>+3.1%</div></div>
+        <div class="statcard"><div class="top"><span class="k">CTR</span><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></span></div><div class="v">3.82%</div><div class="d trend-down"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 7l10 10M17 17H9M17 17V9"/></svg>-0.4%</div></div>
+        <div class="statcard"><div class="top"><span class="k">Spend</span><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></span></div><div class="v">$284.9K</div><div class="d trend-up"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>+8.7%</div></div>
+      </div>
+      <p class="spec"><b>StatCard</b> — mono overline label · Fraunces value · signed trend (success ↑ / error ↓). Hover lifts with <code>--e-3</code>.</p>
+    </section>
+
+    <!-- 11 MOLECULES -->
+    <section class="section" id="molecules">
+      <div class="eyebrow">11 — Molecules</div>
+      <h2 class="h-display">Rows, alerts &amp; navigation</h2>
+      <div class="grid g-2" style="margin-top:20px">
+        <div class="panel">
+          <h3 class="subhead" style="margin-top:0">InfoRow list</h3>
+          <div class="inforow"><span class="lab">Campaign ID</span><span class="val sp-mono">cmp_7fa20b</span></div>
+          <div class="inforow"><span class="lab">Objective</span><span class="val">Conversions</span></div>
+          <div class="inforow"><span class="lab">Status</span><span class="val"><span class="chip-badge st-active"><span class="led"></span>Active</span></span></div>
+          <div class="inforow"><span class="lab">Budget / day</span><span class="val">$1,200.00</span></div>
+        </div>
+        <div class="stack">
+          <div class="alert al-success"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></span><div><b>Campaign saved</b><p>Changes are live and metrics will update within a minute.</p></div></div>
+          <div class="alert al-warning"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></span><div><b>Budget nearly exhausted</b><p>92% of the daily budget has been spent.</p></div></div>
+          <div class="alert al-error"><span class="ico"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></span><div><b>Failed to load metrics</b><p>Check the connection and retry.</p></div></div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:20px;justify-content:space-between">
+        <div class="crumb"><a href="#">Campaigns</a><span class="sep">/</span><a href="#">Q3 Retargeting</a><span class="sep">/</span><span class="cur">Edit</span></div>
+        <div class="pager"><button disabled>‹</button><button class="on">1</button><button>2</button><button>3</button><button>…</button><button>12</button><button>›</button></div>
+      </div>
+    </section>
+
+    <!-- 12 DATA TABLE -->
+    <section class="section" id="table">
+      <div class="eyebrow">12 — Organism · Data table</div>
+      <h2 class="h-display">The campaign table</h2>
+      <div class="table-wrap" style="margin-top:20px">
+        <div class="table-toolbar">
+          <h4>Active campaigns</h4>
+          <div class="row"><div class="search" style="max-width:220px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input class="input" placeholder="Filter…"/></div><button class="btn btn-primary btn-sm">+ New</button></div>
+        </div>
+        <table class="dt">
+          <thead><tr><th>Campaign</th><th>Status</th><th class="num">Impressions</th><th class="num">Clicks</th><th class="num">CTR</th><th class="num">Spend</th></tr></thead>
+          <tbody>
+            <tr><td class="name">Q3 Retargeting</td><td><span class="chip-badge st-active"><span class="led"></span>Active</span></td><td class="num">412,882</td><td class="num">15,204</td><td class="num">3.68%</td><td class="num">$92,410</td></tr>
+            <tr><td class="name">Summer Push</td><td><span class="chip-badge st-paused"><span class="led"></span>Paused</span></td><td class="num">288,190</td><td class="num">9,880</td><td class="num">3.43%</td><td class="num">$61,220</td></tr>
+            <tr><td class="name">Influencer Collab</td><td><span class="chip-badge st-active"><span class="led"></span>Active</span></td><td class="num">201,344</td><td class="num">11,002</td><td class="num">5.46%</td><td class="num">$48,900</td></tr>
+            <tr><td class="name">Email Blast</td><td><span class="chip-badge st-completed"><span class="led"></span>Completed</span></td><td class="num">98,410</td><td class="num">2,140</td><td class="num">2.17%</td><td class="num">$18,300</td></tr>
+            <tr><td class="name">Seasonal Offer</td><td><span class="chip-badge st-draft"><span class="led"></span>Draft</span></td><td class="num">—</td><td class="num">—</td><td class="num">—</td><td class="num">$0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="spec"><b>DataTable&lt;T&gt;</b> — mono uppercase headers · numeric cells tabular &amp; right-aligned · row hover <code>--surface</code> · loading &amp; empty slots built-in.</p>
+    </section>
+
+    <!-- 13 CHART CARD -->
+    <section class="section" id="chart">
+      <div class="eyebrow">13 — Organism · Chart card</div>
+      <h2 class="h-display">Charts live in cards</h2>
+      <div class="grid g-2" style="margin-top:20px">
+        <div class="chartcard">
+          <div class="head"><div><div class="title">Performance trend</div><div class="sub">Last 14 days · daily</div></div><span class="chip-badge st-active"><span class="led"></span>Live</span></div>
+          <svg class="spark" viewBox="0 0 400 120" preserveAspectRatio="none">
+            <defs><linearGradient id="fill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2340D9" stop-opacity=".22"/><stop offset="1" stop-color="#2340D9" stop-opacity="0"/></linearGradient></defs>
+            <path d="M0,90 L30,80 L60,84 L90,60 L120,66 L150,44 L180,52 L210,34 L240,40 L270,22 L300,30 L330,18 L360,26 L400,12" fill="none" stroke="#2340D9" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>
+            <path d="M0,90 L30,80 L60,84 L90,60 L120,66 L150,44 L180,52 L210,34 L240,40 L270,22 L300,30 L330,18 L360,26 L400,12 L400,120 L0,120 Z" fill="url(#fill)"/>
+            <path d="M0,100 L40,96 L80,98 L120,88 L160,90 L200,80 L240,84 L280,74 L320,78 L360,68 L400,72" fill="none" stroke="#0F766E" stroke-width="2" stroke-dasharray="3 4" stroke-linecap="round"/>
+          </svg>
+          <div class="legend"><span><i style="background:#2340D9"></i>Impressions</span><span><i style="background:#0F766E"></i>Clicks</span></div>
+        </div>
+        <div class="chartcard">
+          <div class="head"><div><div class="title">Country traffic</div><div class="sub">Top markets · impressions</div></div></div>
+          <div class="bars">
+            <div class="b" style="height:92%"></div><div class="b" style="height:74%"></div><div class="b" style="height:61%"></div><div class="b" style="height:48%"></div><div class="b" style="height:39%"></div><div class="b" style="height:28%"></div><div class="b" style="height:20%"></div>
+          </div>
+          <div class="legend"><span>VN</span><span>US</span><span>SG</span><span>JP</span><span>DE</span><span>FR</span><span>AU</span></div>
+        </div>
+      </div>
+      <p class="spec"><b>ChartCard</b> wraps every ECharts instance — fixed header (title/subtitle/action) + fixed-height body. Series colours pull from tokens.</p>
+    </section>
+
+    <!-- 14 STATES -->
+    <section class="section" id="states">
+      <div class="eyebrow">14 — Organism · States</div>
+      <h2 class="h-display">Empty &amp; error</h2>
+      <div class="grid g-2" style="margin-top:20px">
+        <div class="state"><div class="glyph"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18M8 14h8"/></svg></div><h4>No campaigns yet</h4><p>Create your first campaign to start collecting impressions and clicks.</p><button class="btn btn-primary btn-sm">+ New campaign</button></div>
+        <div class="state"><div class="glyph" style="color:var(--error);background:var(--error-soft)"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></div><h4>Something went wrong</h4><p>We couldn't load this data. It's usually temporary.</p><button class="btn btn-secondary btn-sm">Try again</button></div>
+      </div>
+    </section>
+
+    <!-- 15 DIALOG -->
+    <section class="section" id="dialog">
+      <div class="eyebrow">15 — Organism · Dialog</div>
+      <h2 class="h-display">Confirm dialog</h2>
+      <div class="modal-demo" style="margin-top:20px">
+        <div class="dialog">
+          <div class="dico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></div>
+          <h4>Delete this campaign?</h4>
+          <p>“Q3 Retargeting” and its ads will be archived. This action can't be undone from the dashboard.</p>
+          <div class="acts"><button class="btn btn-ghost">Cancel</button><button class="btn btn-danger">Delete campaign</button></div>
+        </div>
+      </div>
+      <p class="spec"><b>ConfirmDialog</b> — severity drives the icon &amp; primary colour (danger shown). Backdrop blur · <code>--e-4</code> · focus trapped in the real component.</p>
+    </section>
+
+    <!-- 16 APP CHROME -->
+    <section class="section" id="chrome">
+      <div class="eyebrow">16 — Organism · App chrome</div>
+      <h2 class="h-display">Header &amp; sidebar</h2>
+      <div class="chrome-top" style="margin-top:20px">
+        <div class="left"><div class="brand" style="margin:0"><div class="mark" style="width:28px;height:28px"></div><b style="font-size:15px">AdTech</b></div><div class="crumb"><span class="cur">Dashboard</span></div></div>
+        <div class="row"><div class="search" style="max-width:200px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input class="input" placeholder="Search…"/></div><span class="badge-count" style="background:var(--error)">3</span><span class="avatar" style="width:32px;height:32px;font-size:12px">AN</span></div>
+      </div>
+      <div class="chrome-nav" style="margin-top:16px">
+        <a class="on"><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>Dashboard</a>
+        <a><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>Campaigns</a>
+        <a><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18"/></svg>Ads</a>
+        <a><svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M3 20a6 6 0 0112 0M16 6a3 3 0 010 6M21 20a6 6 0 00-4-5.7"/></svg>Users</a>
+      </div>
+    </section>
+
+    <!-- 17 BASE PRIMITIVES -->
+    <section class="section" id="base">
+      <div class="eyebrow">17 — Base primitives</div>
+      <h2 class="h-display">The raw building blocks</h2>
+      <p class="note">Everything above composes from these. They map directly to <code>components/ui/typography</code>, <code>/layout</code> and the shared surface tokens.</p>
+
+      <h3 class="subhead">Text components — <code>ui/typography/Text</code></h3>
+      <div class="panel">
+        <div class="textspec"><div class="m"><b>PageTitle</b>Fraunces 600 · 30px</div><div class="sp-serif" style="font-weight:600;font-size:30px;letter-spacing:-.02em">Campaigns</div></div>
+        <div class="textspec"><div class="m"><b>SectionTitle</b>Geist 600 · 18px</div><div style="font-weight:600;font-size:18px">Targeting &amp; schedule</div></div>
+        <div class="textspec"><div class="m"><b>Label</b>Geist 500 · 13px</div><div style="font-weight:500;font-size:13px;color:var(--ink-2)">Daily budget</div></div>
+        <div class="textspec"><div class="m"><b>TextMuted</b>Geist 400 · 13.5px · muted</div><div style="font-size:13.5px;color:var(--muted)">Updated 3 minutes ago</div></div>
+        <div class="textspec"><div class="m"><b>StatValue</b>Fraunces 600 · tabular</div><div class="sp-serif" style="font-weight:600;font-size:28px;letter-spacing:-.02em;font-variant-numeric:tabular-nums">48,921</div></div>
+      </div>
+
+      <h3 class="subhead">Surface &amp; Card</h3>
+      <div class="grid g-3">
+        <div class="cardc"><div class="cch">Card</div><div class="ccb">Base surface with header, body &amp; footer. Elevation <code>--e-1</code>, radius <code>--r-lg</code>.</div><div class="ccf"><button class="btn btn-ghost btn-sm">Skip</button><button class="btn btn-primary btn-sm">Save</button></div></div>
+        <div class="panel" style="display:grid;place-items:center;text-align:center"><div><div class="sp-mono" style="font-size:11px;color:var(--muted)">.panel</div><p style="font-size:13px;color:var(--ink-2);margin-top:8px">Flat surface, no chrome.<br>The default container.</p></div></div>
+        <div class="lbox" style="display:grid;place-items:center">Surface tokens<br>paper · surface · panel</div>
+      </div>
+
+      <h3 class="subhead">Divider</h3>
+      <div class="panel">
+        <span style="font-size:13px;color:var(--muted)">solid</span><hr class="divx"/>
+        <span style="font-size:13px;color:var(--muted)">dashed</span><hr class="divx dashed"/>
+        <span style="font-size:13px;color:var(--muted)">strong</span><hr class="divx strong" style="margin-bottom:0"/>
+      </div>
+
+      <h3 class="subhead">Icon set — <code>1.8–2px stroke · currentColor</code></h3>
+      <div class="iconset">
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>dashboard</div>
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>trend</div>
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z"/><circle cx="12" cy="12" r="3"/></svg>views</div>
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M9 3v6l4-2 3 8-3 1-3-7-4 3z"/></svg>click</div>
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>spend</div>
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>search</div>
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 5v14M5 12h14"/></svg>add</div>
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>delete</div>
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"/></svg>filter</div>
+        <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 00.3 1.9l.1.1a2 2 0 11-2.8 2.8l-.1-.1a1.7 1.7 0 00-2.9 1.2v.2a2 2 0 11-4 0v-.1A1.7 1.7 0 005 19.4a2 2 0 11-2.8-2.8l.1-.1A1.7 1.7 0 004.6 15a2 2 0 01-1.8-1.2H2.6a2 2 0 010-4h.1A1.7 1.7 0 004.6 9a2 2 0 11-.3-3l.1.1a1.7 1.7 0 001.9.3H6.4A1.7 1.7 0 009 4.6a2 2 0 114 0v.1A1.7 1.7 0 0019 5a2 2 0 112.8 2.8l-.1.1a1.7 1.7 0 00-.3 1.9V10a2 2 0 010 4z"/></svg>settings</div>
+      </div>
+
+      <h3 class="subhead">Layout primitives — <code>ui/layout</code></h3>
+      <div class="grid g-3">
+        <div><div class="stack"><div class="lbox">Stack · gap</div><div class="lbox">column flow</div><div class="lbox">vertical rhythm</div></div><p class="spec"><b>Stack</b> — 1-D flex, token gap</p></div>
+        <div><div class="grid g-2"><div class="lbox">Grid</div><div class="lbox">2-col</div><div class="lbox">auto</div><div class="lbox">responsive</div></div><p class="spec"><b>Grid</b> — responsive columns</p></div>
+        <div><div class="container-demo"><div class="inner">Container · max-width, centred</div></div><p class="spec"><b>Container</b> — page width guard</p></div>
+      </div>
+    </section>
+
+    <!-- 18 CORE & COMMON -->
+    <section class="section" id="core">
+      <div class="eyebrow">18 — Core &amp; common</div>
+      <h2 class="h-display">Shared components every page uses</h2>
+      <p class="note">The connective tissue in <code>components/ui/</code> &amp; <code>components/layout/</code> — reused across every route.</p>
+
+      <h3 class="subhead">PageHeader — <code>ui/layout/PageHeader</code></h3>
+      <div class="panel">
+        <div class="pageheader"><div><div class="crumb" style="margin-bottom:8px"><a href="#">Campaigns</a><span class="sep">/</span><span class="cur">Q3 Retargeting</span></div><div class="pt">Q3 Retargeting</div><div class="ps">Conversions · started 12 Jun 2026</div></div><div class="row"><button class="btn btn-secondary">Edit</button><button class="btn btn-danger">Delete</button></div></div>
+      </div>
+
+      <div class="grid g-2" style="margin-top:20px">
+        <div>
+          <h3 class="subhead" style="margin-top:0">PageContainer</h3>
+          <div class="container-demo"><div class="inner">PageContainer<br>padding + max-width wrapper</div></div>
+          <p class="spec"><b>ui/layout/PageContainer</b> — consistent gutters per route</p>
+        </div>
+        <div>
+          <h3 class="subhead" style="margin-top:0">SelectField — <code>ui/form/SelectField</code></h3>
+          <div class="field" style="max-width:none"><label>Granularity</label><select class="input select"><option>Hourly</option><option>Daily</option><option>Weekly</option><option>Monthly</option></select><span class="hint">RHF-bound, same API as FormField.</span></div>
+        </div>
+      </div>
+
+      <div class="grid g-2" style="margin-top:20px">
+        <div>
+          <h3 class="subhead" style="margin-top:0">LoadingState / LazyPage</h3>
+          <div class="center-load"><div class="spinner"></div>Loading dashboard…</div>
+          <p class="spec"><b>ui/feedback/LoadingState</b> — Suspense fallback for every lazy route</p>
+        </div>
+        <div>
+          <h3 class="subhead" style="margin-top:0">ErrorBoundary fallback</h3>
+          <div class="state" style="padding:var(--s-5)"><div class="glyph" style="width:44px;height:44px;color:var(--error);background:var(--error-soft)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg></div><h4 style="font-size:16px">This section crashed</h4><p style="margin-bottom:12px">The rest of the app keeps working.</p><button class="btn btn-secondary btn-sm">Reload</button></div>
+          <p class="spec"><b>ui/feedback/ErrorBoundary</b> — class component, wraps the app</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 19 OVERLAYS & NAV -->
+    <section class="section" id="overlays">
+      <div class="eyebrow">19 — Extended · Overlays &amp; navigation</div>
+      <h2 class="h-display">Overlays &amp; navigation</h2>
+
+      <h3 class="subhead">Tabs</h3>
+      <div class="panel">
+        <div class="tabs" data-tabs><button class="on" data-tab="0">Overview</button><button data-tab="1">Ads</button><button data-tab="2">Settings</button></div>
+        <div class="tabpanel" data-panel="0">Impressions, clicks and spend for this campaign.</div>
+        <div class="tabpanel" data-panel="1" hidden>3 active ads · 1 in review.</div>
+        <div class="tabpanel" data-panel="2" hidden>Targeting, schedule and budget controls.</div>
+      </div>
+
+      <div class="grid g-2" style="margin-top:20px">
+        <div><h3 class="subhead" style="margin-top:0">Segmented control</h3><div class="segmented" data-seg><button class="on">Hourly</button><button>Daily</button><button>Weekly</button><button>Monthly</button></div><p class="spec">granularity toggle for time-series</p></div>
+        <div><h3 class="subhead" style="margin-top:0">Dropdown menu</h3>
+          <div class="menu-wrap" data-menu><button class="btn btn-secondary">Actions<svg width="14" height="14" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2 4l4 4 4-4"/></svg></button>
+            <div class="menu"><button><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M11 4h-7v16h16v-7"/><path d="M18 2l4 4-10 10H8v-4z"/></svg>Edit</button><button><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 012-2h10"/></svg>Duplicate</button><div class="div"></div><button class="danger"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>Delete</button></div>
+          </div></div>
+      </div>
+
+      <div class="grid g-3" style="margin-top:20px">
+        <div><h3 class="subhead" style="margin-top:0">Popover</h3><div class="popover"><span class="caret"></span><h5>CTR</h5>Click-through rate = clicks ÷ impressions, over the selected window.</div></div>
+        <div><h3 class="subhead" style="margin-top:0">Drawer</h3><button class="btn btn-primary" data-drawer-open>Open drawer</button>
+          <div class="drawer-demo" style="margin-top:12px" data-drawer><div class="drawer-scrim" data-drawer-close></div><div class="drawer"><div class="dh"><b>Quick edit</b><button class="iconbtn" data-drawer-close><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div><div class="db"><div class="field" style="max-width:none"><label>Daily budget</label><input class="input" value="$1,200"/></div><div style="margin-top:14px"><button class="btn btn-primary" data-drawer-close>Save</button></div></div></div></div>
+        </div>
+        <div><h3 class="subhead" style="margin-top:0">Command palette</h3><button class="btn btn-secondary" data-cmdk-open>Open <kbd style="font-family:var(--mono);font-size:11px;margin-left:6px">⌘K</kbd></button>
+          <div class="cmdk-demo" style="margin-top:12px" data-cmdk><div class="cmdk"><div class="cin"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--muted)" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input placeholder="Search or jump to…"/><kbd>esc</kbd></div><div class="clist"><div class="cgrp">Navigate</div><div class="ci sel"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/></svg>Dashboard</div><div class="ci"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg>Campaigns</div><div class="cgrp">Actions</div><div class="ci"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 5v14M5 12h14"/></svg>New campaign</div></div></div><button data-cmdk-close style="position:absolute;inset:0;background:none;border:none;cursor:default"></button></div>
+        </div>
+      </div>
+
+      <h3 class="subhead">Modal · form dialog</h3>
+      <div class="modal-demo">
+        <div class="dialog" style="max-width:440px"><h4>New campaign</h4><p style="margin-bottom:16px">Set the essentials — you can refine targeting later.</p>
+          <div class="stack"><div class="field" style="max-width:none"><label>Name <span class="req">*</span></label><input class="input" placeholder="e.g. Autumn launch"/></div><div class="row" style="gap:12px"><div class="field" style="flex:1;max-width:none"><label>Daily budget</label><input class="input" value="$500"/></div><div class="field" style="flex:1;max-width:none"><label>Objective</label><select class="input select"><option>Conversions</option></select></div></div></div>
+          <div class="acts" style="margin-top:20px"><button class="btn btn-ghost">Cancel</button><button class="btn btn-primary">Create</button></div>
+        </div>
+      </div>
+      <p class="spec"><b>Form dialog</b> vs <b>ConfirmDialog</b> — same shell, but hosts inputs &amp; a non-destructive primary.</p>
+    </section>
+
+    <!-- 20 ADVANCED FORMS -->
+    <section class="section" id="forms2">
+      <div class="eyebrow">20 — Extended · Advanced forms</div>
+      <h2 class="h-display">Advanced form controls</h2>
+      <div class="grid g-2" style="margin-top:20px">
+        <div><h3 class="subhead" style="margin-top:0">Combobox / autocomplete</h3>
+          <div class="combo" data-combo><input class="input" placeholder="Search country…" autocomplete="off"/><div class="opts" hidden></div></div>
+          <p class="spec">type-ahead filter · keyboard-navigable</p>
+        </div>
+        <div><h3 class="subhead" style="margin-top:0">Multi-select tags — targeting</h3>
+          <div class="tagfield" data-tags><span class="t">Vietnam<button aria-label="remove"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg></button></span><span class="t">Singapore<button aria-label="remove"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg></button></span><input placeholder="Add country…"/></div>
+          <p class="spec">countries / devices — chips + free input</p>
+        </div>
+      </div>
+
+      <div class="grid g-2" style="margin-top:20px">
+        <div><h3 class="subhead" style="margin-top:0">Date range picker</h3>
+          <div class="cal"><div class="ch"><button class="iconbtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 6l-6 6 6 6"/></svg></button><b>July 2026</b><button class="iconbtn"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 6l6 6-6 6"/></svg></button></div>
+            <div class="grid7"><span class="wd">M</span><span class="wd">T</span><span class="wd">W</span><span class="wd">T</span><span class="wd">F</span><span class="wd">S</span><span class="wd">S</span>
+            <span class="mut">30</span><span>1</span><span>2</span><span>3</span><span>4</span><span class="mut">5</span><span class="mut">6</span>
+            <span>7</span><span>8</span><span class="end">9</span><span class="in">10</span><span class="in">11</span><span class="in mut">12</span><span class="in mut">13</span>
+            <span class="in">14</span><span class="in">15</span><span class="end">16</span><span>17</span><span>18</span><span class="mut">19</span><span class="mut">20</span>
+            <span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span class="mut">26</span><span class="mut">27</span></div>
+          </div>
+          <p class="spec">selected range 9 → 16 Jul</p>
+        </div>
+        <div><h3 class="subhead" style="margin-top:0">Slider — bid / budget</h3>
+          <div class="panel"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span class="sp-mono" style="font-size:11px;color:var(--muted)">DAILY CAP</span><span class="slider-val" data-slider-out>$1,200</span></div>
+          <input type="range" class="slider" min="100" max="5000" value="1200" step="50" data-slider style="--fill:24%"/></div>
+        </div>
+      </div>
+
+      <h3 class="subhead">Stepper — campaign wizard</h3>
+      <div class="panel">
+        <div class="stepper"><div class="st done"><span class="dot"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="lab">Details</span><span class="line"></span></div><div class="st done"><span class="dot"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span class="lab">Targeting</span><span class="line"></span></div><div class="st now"><span class="dot">3</span><span class="lab">Budget</span><span class="line"></span></div><div class="st"><span class="dot">4</span><span class="lab">Review</span></div></div>
+      </div>
+
+      <h3 class="subhead">File upload — ad creatives → MinIO</h3>
+      <div class="dropzone" data-dropzone><div class="dzico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 16v3a1 1 0 001 1h14a1 1 0 001-1v-3"/></svg></div><b>Drop creatives here</b><span>PNG, JPG or MP4 · up to 20MB · banner / native / video</span></div>
+      <div class="upfile"><div class="thumb"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="9" cy="9" r="2"/><path d="M21 15l-5-5L5 21"/></svg></div><div class="info"><b>banner_970x250.png</b><div class="pbar"><i style="width:68%"></i></div></div><span class="sp-mono" style="font-size:11px;color:var(--muted)">68%</span></div>
+    </section>
+
+    <!-- 21 DATA & DATAVIZ -->
+    <section class="section" id="dataviz">
+      <div class="eyebrow">21 — Extended · Data &amp; dataviz</div>
+      <h2 class="h-display">Data &amp; visualisation</h2>
+
+      <div class="grid g-2" style="margin-top:20px">
+        <div class="panel"><h3 class="subhead" style="margin-top:0">Progress / meter — budget pacing</h3>
+          <div class="meter" style="margin-bottom:18px"><div class="mh"><b>Q3 Retargeting</b><span class="pct">62%</span></div><div class="track"><i style="width:62%"></i></div></div>
+          <div class="meter" style="margin-bottom:18px"><div class="mh"><b>Summer Push</b><span class="pct">88%</span></div><div class="track"><i class="warn" style="width:88%"></i></div></div>
+          <div class="meter"><div class="mh"><b>Email Blast</b><span class="pct">97%</span></div><div class="track"><i class="danger" style="width:97%"></i></div></div>
+        </div>
+        <div class="panel" style="display:flex;align-items:center;justify-content:center;gap:28px"><div class="ring-wrap"><div class="ring" style="--p:72"></div><b style="position:absolute;font-family:var(--serif);font-weight:600;font-size:22px">72%</b></div><div><div class="sp-mono" style="font-size:11px;color:var(--muted);letter-spacing:.1em">GOAL</div><p style="font-size:13.5px;color:var(--ink-2);margin-top:6px;max-width:22ch">Conversion target progress this month.</p></div></div>
+      </div>
+
+      <div class="grid g-2" style="margin-top:20px">
+        <div class="panel"><h3 class="subhead" style="margin-top:0">KPI comparison / delta</h3>
+          <div class="sp-mono" style="font-size:11px;color:var(--muted);letter-spacing:.1em;margin-bottom:10px">CONVERSIONS · 7D</div>
+          <div class="kpi"><div class="big">2,481</div><div class="cmp"><div class="delta trend-up"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M7 17L17 7M17 7H9M17 7v8"/></svg>18.2%</div><div class="prev">prev 2,099</div></div></div>
+        </div>
+        <div class="panel"><h3 class="subhead" style="margin-top:0">Real-time counter — WebSocket</h3>
+          <div class="live"><span class="lt"><span class="pulse"></span>Live impressions</span><span class="lv" data-live>1,284,551</span></div>
+        </div>
+      </div>
+
+      <h3 class="subhead">Sparkline — inline trend</h3>
+      <div class="table-wrap">
+        <table class="dt"><thead><tr><th>Campaign</th><th>7-day trend</th><th class="num">Clicks</th><th class="num">Δ</th></tr></thead><tbody>
+          <tr><td class="name">Q3 Retargeting</td><td><svg width="120" height="30" viewBox="0 0 120 30"><polyline points="0,24 20,20 40,22 60,12 80,15 100,6 120,8" fill="none" stroke="#2340D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></td><td class="num">15,204</td><td class="num trend-up">+8%</td></tr>
+          <tr><td class="name">Summer Push</td><td><svg width="120" height="30" viewBox="0 0 120 30"><polyline points="0,10 20,14 40,12 60,18 80,16 100,22 120,20" fill="none" stroke="#BE123C" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></td><td class="num">9,880</td><td class="num trend-down">-4%</td></tr>
+        </tbody></table>
+      </div>
+
+      <div class="grid g-2" style="margin-top:20px">
+        <div class="panel"><h3 class="subhead" style="margin-top:0">Funnel</h3>
+          <div class="funnel"><div class="fr"><div class="fbar" style="width:100%">1.28M</div><span class="fmeta"><b>Impressions</b></span></div><div class="fr"><div class="fbar" style="width:38%">48.9K</div><span class="fmeta"><b>Clicks</b> · 3.82%</span></div><div class="fr"><div class="fbar" style="width:12%">2.4K</div><span class="fmeta"><b>Conversions</b> · 5.07%</span></div></div>
+        </div>
+        <div class="panel"><h3 class="subhead" style="margin-top:0">Geo distribution</h3>
+          <div class="geo"><div class="gr"><span class="flag">🇻🇳</span><div class="gbar"><i style="width:92%"></i></div><span class="gv">412K</span></div><div class="gr"><span class="flag">🇺🇸</span><div class="gbar"><i style="width:70%"></i></div><span class="gv">288K</span></div><div class="gr"><span class="flag">🇸🇬</span><div class="gbar"><i style="width:52%"></i></div><span class="gv">201K</span></div><div class="gr"><span class="flag">🇯🇵</span><div class="gbar"><i style="width:34%"></i></div><span class="gv">128K</span></div><div class="gr"><span class="flag">🇩🇪</span><div class="gbar"><i style="width:22%"></i></div><span class="gv">88K</span></div></div>
+        </div>
+      </div>
+
+      <h3 class="subhead">Heatmap — activity by hour × day</h3>
+      <div class="panel"><div class="heat" data-heat></div><div class="heat-legend">Less<span class="sc" style="background:var(--surface)"></span><span class="sc" style="background:color-mix(in srgb,var(--accent) 30%,transparent)"></span><span class="sc" style="background:color-mix(in srgb,var(--accent) 65%,transparent)"></span><span class="sc" style="background:var(--accent)"></span>More</div></div>
+    </section>
+
+    <!-- 22 FEEDBACK & STRUCTURE -->
+    <section class="section" id="structure">
+      <div class="eyebrow">22 — Extended · Feedback &amp; structure</div>
+      <h2 class="h-display">Feedback &amp; structure</h2>
+
+      <h3 class="subhead">Skeleton loaders</h3>
+      <div class="grid g-3">
+        <div class="sk-card"><div class="sk sk-line" style="width:40%"></div><div class="sk" style="height:30px;width:70%;margin:12px 0"></div><div class="sk sk-line"></div><div class="sk sk-line" style="width:80%"></div></div>
+        <div class="sk-card"><div class="row" style="gap:12px"><div class="sk" style="width:38px;height:38px;border-radius:50%"></div><div style="flex:1"><div class="sk sk-line" style="width:60%"></div><div class="sk sk-line" style="width:40%"></div></div></div><div class="sk sk-line" style="margin-top:14px"></div><div class="sk sk-line" style="width:90%"></div></div>
+        <div class="sk-card"><div class="sk sk-line" style="width:50%;margin-bottom:14px"></div><div class="sk sk-line"></div><div class="sk sk-line"></div><div class="sk sk-line" style="width:75%"></div></div>
+      </div>
+
+      <div class="grid g-2" style="margin-top:20px">
+        <div><h3 class="subhead" style="margin-top:0">Accordion</h3>
+          <div class="acc" data-acc><div class="item open"><button class="ah">What counts as an impression?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="ab"><p>An impression is recorded when the ad renders in the viewport for at least one second.</p></div></div><div class="item"><button class="ah">How is CTR calculated?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="ab"><p>Clicks divided by impressions across the selected reporting window.</p></div></div><div class="item"><button class="ah">When does spend update?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="ab"><p>Near real-time — events flow through the worker pool and settle within a minute.</p></div></div></div>
+        </div>
+        <div><h3 class="subhead" style="margin-top:0">Notification center</h3>
+          <div class="notif"><div class="nh"><b>Notifications</b><a class="link-a" style="font-size:12px" href="#">Mark all read</a></div>
+            <div class="ni unread"><div class="nd" style="background:var(--success-soft);color:var(--success)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M8 12l3 3 5-6"/></svg></div><div class="nb"><b>Campaign approved</b><p>“Autumn Launch” is now live.</p></div><span class="nt">2m</span></div>
+            <div class="ni unread"><div class="nd" style="background:var(--warning-soft);color:var(--warning)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg></div><div class="nb"><b>Budget at 88%</b><p>Summer Push is pacing fast.</p></div><span class="nt">1h</span></div>
+            <div class="ni"><div class="nd" style="background:var(--accent-soft);color:var(--accent-ink)"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 3 5-6"/></svg></div><div class="nb"><b>Weekly report ready</b><p>Your summary for last week.</p></div><span class="nt">1d</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid g-2" style="margin-top:20px">
+        <div><h3 class="subhead" style="margin-top:0">Banner / announcement</h3>
+          <div class="stack">
+            <div class="banner b-info" data-banner><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 16v-4M12 8h.01"/></svg><span class="bx"><b>New:</b> geo heatmaps are now available in reports.</span><button class="close" data-banner-close><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg></button></div>
+            <div class="banner b-warn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg><span class="bx"><b>Scheduled maintenance</b> Sat 02:00–03:00 UTC.</span></div>
+          </div>
+        </div>
+        <div><h3 class="subhead" style="margin-top:0">Timeline — campaign lifecycle</h3>
+          <div class="timeline"><div class="tv done"><div class="tt">Created</div><div class="tm">12 Jun · 09:14</div></div><div class="tv done"><div class="tt">Activated</div><div class="tm">12 Jun · 11:00</div><div class="td">Went live across 5 markets.</div></div><div class="tv on"><div class="tt">Running</div><div class="tm">now</div><div class="td">62% of budget spent.</div></div><div class="tv"><div class="tt">Ends</div><div class="tm">31 Jul</div></div></div>
+        </div>
+      </div>
+
+      <h3 class="subhead">Filter bar</h3>
+      <div class="filterbar" data-filterbar>
+        <span class="fchip"><span class="fk">Status:</span><span class="fv">Active</span><button data-fx><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6L6 18M6 6l12 12"/></svg></button></span>
+        <span class="fchip"><span class="fk">Country:</span><span class="fv">Vietnam</span><button data-fx><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6L6 18M6 6l12 12"/></svg></button></span>
+        <span class="fchip"><span class="fk">Device:</span><span class="fv">Mobile</span><button data-fx><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><path d="M18 6L6 18M6 6l12 12"/></svg></button></span>
+        <button class="addf"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 5v14M5 12h14"/></svg>Add filter</button>
+      </div>
+    </section>
+
+    <!-- 23 TEMPLATES -->
+    <section class="section" id="templates">
+      <div class="eyebrow">23 — Templates</div>
+      <h2 class="h-display">Page skeletons</h2>
+      <p class="note">Three layouts cover the product: dashboard, list and detail. All share the sidebar + top bar shell.</p>
+      <div class="grid g-3" style="margin-top:20px">
+        <div class="wire wf-dash"><span class="wf-tag">dashboard</span>
+          <div class="wf-side"><div class="wf-dot act"></div><div class="wf-dot"></div><div class="wf-dot"></div><div class="wf-dot"></div></div>
+          <div class="wf-main"><div class="wf-topbar"></div><div class="wf-cards"><div></div><div></div><div></div><div></div></div><div class="wf-charts"><div></div><div></div></div></div>
+        </div>
+        <div class="wire wf-dash wf-list"><span class="wf-tag">list</span>
+          <div class="wf-side"><div class="wf-dot"></div><div class="wf-dot act"></div><div class="wf-dot"></div><div class="wf-dot"></div></div>
+          <div class="wf-main"><div class="wf-topbar"></div><div class="wf-charts"><div style="height:160px"></div></div></div>
+        </div>
+        <div class="wire wf-dash wf-detail"><span class="wf-tag">detail</span>
+          <div class="wf-side"><div class="wf-dot"></div><div class="wf-dot act"></div><div class="wf-dot"></div><div class="wf-dot"></div></div>
+          <div class="wf-main"><div class="wf-topbar"></div><div class="wf-cards" style="grid-template-columns:repeat(3,1fr)"><div></div><div></div><div></div></div><div class="wf-charts"><div style="height:100px"></div></div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 18 USAGE -->
+    <section class="section" id="usage">
+      <div class="eyebrow">24 — Usage &amp; mapping</div>
+      <h2 class="h-display">Do, don't &amp; where it lives</h2>
+      <div class="dd" style="margin-top:20px">
+        <div class="card do"><h5>✓ Do</h5><ul>
+          <li>Reach for a token — <code>--accent</code>, <code>--s-4</code> — never a raw value.</li>
+          <li>Keep one primary action per view.</li>
+          <li>Use Fraunces only for titles &amp; headline numbers.</li>
+          <li>Right-align &amp; tabular-align every numeric column.</li>
+          <li>Pair colour with an icon or label for status.</li>
+        </ul></div>
+        <div class="card dont"><h5>✕ Don't</h5><ul>
+          <li>Introduce new hexes or one-off spacing.</li>
+          <li>Stack two primary buttons side by side.</li>
+          <li>Set Fraunces on body or dense table text.</li>
+          <li>Signal meaning with colour alone (a11y).</li>
+          <li>Nest cards in cards — flatten the hierarchy.</li>
+        </ul></div>
+      </div>
+      <h3 class="subhead">Where each piece lives in code</h3>
+      <div class="foot"><div class="map">
+tokens      → <b>src/app/theme/</b> · palette.ts · typography.ts · shadows.ts<br>
+atoms       → <b>components/ui/</b> form/ · data-display/StatusChip · typography/Text<br>
+molecules   → <b>components/ui/</b> data-display/{StatCard,InfoRow} · form/{FormField,SearchInput} · feedback/ToastContainer · navigation/Pagination<br>
+organisms   → <b>components/ui/</b> data-display/DataTable · overlay/ConfirmDialog · feedback/{EmptyState,ErrorState} · charts/* · layout/navigation/{Header,Sidebar}<br>
+templates   → <b>components/layout/wrappers/</b> MainLayout · pages/*
+      </div></div>
+    </section>
+
+    <footer class="foot">
+      <p><b class="sp-serif" style="font-size:15px">Signal</b> · AdTech Dashboard design system · v1.0 · Fraunces + Geist. This file is the source of truth — keep it in sync with <code>src/app/theme/</code>.</p>
+    </footer>
+  </main>
+</div>
+
+<div id="toast"><span class="dot"></span><span id="toastMsg">Copied</span></div>
+
+<script>
+/* ---- theme toggle (persisted) ---- */
+(function(){
+  var root=document.documentElement, btn=document.getElementById('themeBtn'), lbl=document.getElementById('themeLbl');
+  var saved=null; try{saved=localStorage.getItem('ds-theme')}catch(e){}
+  if(saved){root.setAttribute('data-theme',saved); lbl.textContent=saved.charAt(0).toUpperCase()+saved.slice(1);}
+  btn.addEventListener('click',function(){
+    var next=root.getAttribute('data-theme')==='dark'?'light':'dark';
+    root.setAttribute('data-theme',next);
+    lbl.textContent=next.charAt(0).toUpperCase()+next.slice(1);
+    try{localStorage.setItem('ds-theme',next)}catch(e){}
+  });
+})();
+
+/* ---- click-to-copy tokens ---- */
+(function(){
+  var toast=document.getElementById('toast'), msg=document.getElementById('toastMsg'), t;
+  function show(v){ msg.textContent='Copied '+v; toast.classList.add('show'); clearTimeout(t); t=setTimeout(function(){toast.classList.remove('show')},1400); }
+  function copy(v){
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(v).then(function(){show(v)}).catch(function(){show(v)});}
+    else{var ta=document.createElement('textarea');ta.value=v;document.body.appendChild(ta);ta.select();try{document.execCommand('copy')}catch(e){}document.body.removeChild(ta);show(v);}
+  }
+  document.addEventListener('click',function(e){
+    var el=e.target.closest('[data-copy]'); if(!el)return; copy(el.getAttribute('data-copy'));
+  });
+})();
+
+/* ---- scroll-spy TOC + top bar breadcrumb ---- */
+(function(){
+  var links=[].slice.call(document.querySelectorAll('#toc a'));
+  var map={}; links.forEach(function(a){map[a.getAttribute('href').slice(1)]=a;});
+  var whereat=document.getElementById('whereat');
+  var secs=[].slice.call(document.querySelectorAll('main section[id]'));
+  var io=new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){
+        var id=en.target.id;
+        links.forEach(function(a){a.classList.remove('active')});
+        if(map[id]){map[id].classList.add('active'); var label=map[id].textContent.replace(/^\d+/,'').trim(); whereat.textContent=label.toLowerCase();}
+      }
+    });
+  },{rootMargin:'-45% 0px -50% 0px'});
+  secs.forEach(function(s){io.observe(s)});
+})();
+
+/* ---- extended library interactions ---- */
+(function(){
+  /* tabs */
+  document.querySelectorAll('[data-tabs]').forEach(function(t){
+    t.addEventListener('click',function(e){var b=e.target.closest('[data-tab]');if(!b)return;var i=b.getAttribute('data-tab');
+      t.querySelectorAll('[data-tab]').forEach(function(x){x.classList.toggle('on',x===b)});
+      t.parentElement.querySelectorAll('[data-panel]').forEach(function(p){p.hidden=p.getAttribute('data-panel')!==i});});
+  });
+  /* segmented */
+  document.querySelectorAll('[data-seg]').forEach(function(s){
+    s.addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;s.querySelectorAll('button').forEach(function(x){x.classList.toggle('on',x===b)})});
+  });
+  /* dropdown menu */
+  document.querySelectorAll('[data-menu]').forEach(function(m){
+    m.querySelector('button').addEventListener('click',function(e){e.stopPropagation();m.classList.toggle('open')});
+  });
+  document.addEventListener('click',function(){document.querySelectorAll('[data-menu].open').forEach(function(m){m.classList.remove('open')})});
+  /* drawer */
+  document.querySelectorAll('[data-drawer-open]').forEach(function(b){b.addEventListener('click',function(){b.parentElement.querySelector('[data-drawer]').classList.add('open')})});
+  document.addEventListener('click',function(e){var c=e.target.closest('[data-drawer-close]');if(c){c.closest('[data-drawer]').classList.remove('open')}});
+  /* command palette */
+  document.querySelectorAll('[data-cmdk-open]').forEach(function(b){b.addEventListener('click',function(){var k=b.parentElement.querySelector('[data-cmdk]');k.classList.add('open');var inp=k.querySelector('input');if(inp)setTimeout(function(){inp.focus()},60)})});
+  document.addEventListener('click',function(e){var c=e.target.closest('[data-cmdk-close]');if(c){c.closest('[data-cmdk]').classList.remove('open')}});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')document.querySelectorAll('[data-cmdk].open').forEach(function(k){k.classList.remove('open')})});
+  /* combobox */
+  var COUNTRIES=['Vietnam','United States','Singapore','Japan','Germany','France','Australia','United Kingdom','Canada','India','Brazil','South Korea','Thailand','Indonesia','Spain'];
+  document.querySelectorAll('[data-combo]').forEach(function(c){
+    var inp=c.querySelector('input'),box=c.querySelector('.opts');
+    function render(){var q=inp.value.trim().toLowerCase();var list=COUNTRIES.filter(function(x){return !q||x.toLowerCase().indexOf(q)>-1}).slice(0,6);
+      if(!list.length){box.hidden=true;return;}
+      box.innerHTML=list.map(function(x){var i=x.toLowerCase().indexOf(q);var h=(q&&i>-1)?x.slice(0,i)+'<mark>'+x.slice(i,i+q.length)+'</mark>'+x.slice(i+q.length):x;return '<div>'+h+'</div>';}).join('');box.hidden=false;}
+    inp.addEventListener('input',render);inp.addEventListener('focus',render);
+    inp.addEventListener('blur',function(){setTimeout(function(){box.hidden=true},120)});
+    box.addEventListener('mousedown',function(e){var d=e.target.closest('div');if(d){inp.value=d.textContent;box.hidden=true;}});
+  });
+  /* tag field */
+  document.querySelectorAll('[data-tags]').forEach(function(f){
+    var inp=f.querySelector('input');
+    f.addEventListener('click',function(e){var b=e.target.closest('.t button');if(b){b.closest('.t').remove();return;}if(e.target===f)inp.focus();});
+    inp.addEventListener('keydown',function(e){
+      if(e.key==='Enter'&&inp.value.trim()){e.preventDefault();var t=document.createElement('span');t.className='t';
+        t.innerHTML=inp.value.trim().replace(/</g,'&lt;')+'<button aria-label="remove"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18M6 6l12 12"/></svg></button>';
+        f.insertBefore(t,inp);inp.value='';}
+      else if(e.key==='Backspace'&&!inp.value){var tags=f.querySelectorAll('.t');if(tags.length)tags[tags.length-1].remove();}
+    });
+  });
+  /* slider */
+  document.querySelectorAll('[data-slider]').forEach(function(s){
+    var p=s.closest('.panel'),out=p?p.querySelector('[data-slider-out]'):null;
+    function upd(){var min=+s.min,max=+s.max,v=+s.value,pct=((v-min)/(max-min))*100;s.style.setProperty('--fill',pct+'%');if(out)out.textContent='$'+v.toLocaleString();}
+    s.addEventListener('input',upd);upd();
+  });
+  /* dropzone */
+  document.querySelectorAll('[data-dropzone]').forEach(function(d){
+    ['dragenter','dragover'].forEach(function(ev){d.addEventListener(ev,function(e){e.preventDefault();d.classList.add('drag')})});
+    ['dragleave','drop'].forEach(function(ev){d.addEventListener(ev,function(e){e.preventDefault();d.classList.remove('drag')})});
+  });
+  /* accordion */
+  document.querySelectorAll('[data-acc]').forEach(function(a){a.addEventListener('click',function(e){var h=e.target.closest('.ah');if(h)h.parentElement.classList.toggle('open')})});
+  /* banner dismiss */
+  document.addEventListener('click',function(e){var b=e.target.closest('[data-banner-close]');if(b){var n=b.closest('.banner');n.style.transition='opacity .2s';n.style.opacity='0';setTimeout(function(){n.remove()},200);}});
+  /* filter chips */
+  document.querySelectorAll('[data-filterbar]').forEach(function(f){f.addEventListener('click',function(e){var x=e.target.closest('[data-fx]');if(x)x.closest('.fchip').remove();})});
+  /* live counter */
+  document.querySelectorAll('[data-live]').forEach(function(el){var n=parseInt(el.textContent.replace(/,/g,''),10)||0;setInterval(function(){n+=Math.floor(Math.random()*40)+5;el.textContent=n.toLocaleString();},1400);});
+  /* heatmap */
+  document.querySelectorAll('[data-heat]').forEach(function(h){var days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],html='';
+    for(var r=0;r<7;r++){html+='<div class="hl">'+days[r]+'</div>';
+      for(var c=0;c<12;c++){var v=Math.random()*(c>2&&c<10?1:.5);var op=Math.max(.08,Math.min(1,v));html+='<div class="hc" style="opacity:'+op.toFixed(2)+'" title="'+(c*2)+':00"></div>';}}
+    h.innerHTML=html;});
+})();
+</script>
+</body>
+</html>

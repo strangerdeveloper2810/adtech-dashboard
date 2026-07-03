@@ -41,3 +41,28 @@ export interface ChartCardProps {
   action?: ReactNode;
   children: ReactNode;
 }
+
+export interface ProgressMeterProps {
+  value: number;
+  label?: string;
+  warnAt?: number;
+  dangerAt?: number;
+}
+
+export interface RingMeterProps {
+  value: number;
+  label?: string;
+  size?: number;
+}
+
+export interface KpiDeltaProps {
+  value: string | number;
+  delta: number;
+  previous?: string | number;
+  label?: string;
+}
+
+export interface GeoDistributionProps {
+  data: { flag?: string; label: string; value: number }[];
+  max?: number;
+}

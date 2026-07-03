@@ -24,3 +24,35 @@ export interface SearchInputProps {
   debounceMs?: number;
   width?: number | string;
 }
+
+export interface ComboboxProps {
+  options: string[];
+  value: string | null;
+  onChange: (value: string | null) => void;
+  label?: string;
+  placeholder?: string;
+}
+
+export interface TagInputProps {
+  value: string[];
+  onChange: (value: string[]) => void;
+  options?: string[];
+  label?: string;
+  placeholder?: string;
+}
+
+export interface SliderProps {
+  value: number;
+  onChange: (value: number) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  label?: string;
+  formatValue?: (v: number) => string;
+}
+
+export interface DropzoneProps {
+  onFiles: (files: File[]) => void;
+  accept?: string;
+  hint?: string;
+}

@@ -4,6 +4,10 @@ export type {
   StatCardProps,
   StatusChipProps,
   ChartCardProps,
+  ProgressMeterProps,
+  RingMeterProps,
+  KpiDeltaProps,
+  GeoDistributionProps,
 } from "./data-display";
 
 export type {
@@ -11,6 +15,10 @@ export type {
   SelectOption,
   SelectFieldProps,
   SearchInputProps,
+  ComboboxProps,
+  TagInputProps,
+  SliderProps,
+  DropzoneProps,
 } from "./form";
 
 export type {
@@ -21,10 +29,30 @@ export type {
   ErrorBoundaryProps,
   ErrorBoundaryState,
   LazyPageProps,
+  TextSkeletonProps,
+  CardSkeletonProps,
+  BannerProps,
+  AccordionProps,
+  NotificationCenterProps,
 } from "./feedback";
 
-export type { ConfirmDialogProps } from "./overlay";
-export type { PaginationProps } from "./navigation";
+export type {
+  ConfirmDialogProps,
+  DropdownMenuProps,
+  DrawerProps,
+  FormDialogProps,
+  InfoPopoverProps,
+  CommandPaletteProps,
+} from "./overlay";
+
+export type {
+  PaginationProps,
+  TabsProps,
+  SegmentedControlProps,
+  StepperProps,
+  FilterBarProps,
+} from "./navigation";
+
 export type { PageHeaderProps, ProtectedRouteProps } from "./layout";
 
 export type {

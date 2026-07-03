@@ -17,6 +17,7 @@ const CampaignDetailPage = lazy(
   () => import("../pages/campaigns/children/CampaignDetailPage"),
 );
 const NotFoundPage = lazy(() => import("../pages/errors/NotFoundPage"));
+const StyleguidePage = lazy(() => import("../pages/styleguide/StyleguidePage"));
 
 export const router = createBrowserRouter([
   {
@@ -75,6 +76,14 @@ export const router = createBrowserRouter([
             element: (
               <LazyPage>
                 <CampaignsPage />
+              </LazyPage>
+            ),
+          },
+          {
+            path: "/styleguide",
+            element: (
+              <LazyPage>
+                <StyleguidePage />
               </LazyPage>
             ),
           },

@@ -29,7 +29,7 @@
     "@mui/x-data-grid": "^8.27.3",
     "@mui/x-date-pickers": "^8.27.2",
     "@reduxjs/toolkit": "^2.11.2",
-    "axios": "^1.13.6",
+    "cmdk": "^1.1.1",
     "d3": "^7.9.0",
     "dayjs": "^1.11.19",
     "echarts": "^6.0.0",

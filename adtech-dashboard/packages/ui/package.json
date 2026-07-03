@@ -7,6 +7,7 @@
   "exports": { ".": "./src/index.ts", "./*": "./src/*" },
   "dependencies": { "@adtech/types": "workspace:*" },
   "peerDependencies": {
+    "cmdk": "^1.1.1",
     "@mui/icons-material": "^7.3.8",
     "@mui/material": "^7.3.8",
     "react": "^19.2.3",

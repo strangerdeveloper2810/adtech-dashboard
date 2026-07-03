@@ -1,0 +1,14 @@
+{
+  "name": "@adtech/api",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "go run ./cmd/api",
+    "build": "go build -o bin/api ./cmd/api",
+    "start": "./bin/api",
+    "seed": "go run ./cmd/seed",
+    "simulate": "go run ./cmd/simulate",
+    "lint": "go vet ./...",
+    "type-check": "go build -o /dev/null ./..."
+  }
+}

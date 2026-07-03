@@ -1,0 +1,10 @@
+{
+  "name": "@adtech/charts",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "type-check": "tsc --noEmit" },
+  "exports": { ".": "./src/index.ts", "./*": "./src/*" },
+  "dependencies": { "@adtech/types": "workspace:*", "@adtech/theme": "workspace:*" },
+  "peerDependencies": { "echarts": "^6.0.0", "react": "^19.2.3" }
+}

@@ -1,27 +1,54 @@
-# OS
+# ─── Dependencies ───────────────────────────────
+# matches root, apps/*/node_modules and packages/*/node_modules
+node_modules/
+.pnpm-store/
+
+# ─── Build output ───────────────────────────────
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# ─── Turborepo ──────────────────────────────────
+.turbo/
+
+# ─── Go (apps/api) ──────────────────────────────
+apps/api/bin/
+*.exe
+*.out
+coverage.out
+coverage.html
+
+# ─── Test & coverage ────────────────────────────
+coverage/
+playwright-report/
+test-results/
+
+# ─── Environment (never commit secrets) ─────────
+.env
+.env.*
+!.env.example
+
+# ─── Logs ───────────────────────────────────────
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+
+# ─── Docker ─────────────────────────────────────
+docker-compose.override.yml
+
+# ─── Editors / OS ───────────────────────────────
 .DS_Store
 Thumbs.db
-
-# IDE
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
-# Environment
-.env
-.env.*
-!.env.example
-
-# Logs
-*.log
-
-# Docker
-docker-compose.override.yml
-
-# Claude Code
+# ─── Claude Code (local settings) ───────────────
 .claude/
 
-# Docs (local notes)
+# ─── Local docs / notes ─────────────────────────
 docs/

@@ -1,130 +1,108 @@
-# AdTech Dashboard — Frontend
+# AdTech Dashboard — Frontend (`@adtech/web`)
 
-React 19 + TypeScript SPA for managing advertising campaigns with real-time analytics.
+React 19 + TypeScript SPA for managing ad campaigns with real-time analytics. Lives in the monorepo at `apps/web/`; the design system, shared types, hooks and utils are consumed from `@adtech/*` workspace packages (JIT — raw TS source, no build step).
 
-## Tech Stack
+## Tech stack
 
 | Category | Technology |
-|----------|-----------|
-| Framework | React 19, TypeScript 5.9 (strict) |
-| Build | Rsbuild (Rust-based) |
-| State | Redux Toolkit + RTK Query, Zustand (UI + Toast) |
+|---|---|
+| Framework | React 19 · TypeScript 5.9 (strict) |
+| Build | Rsbuild (Rspack / SWC) |
+| State | Redux Toolkit + RTK Query · Zustand (UI + toast) · redux-persist |
 | Routing | React Router v7 (lazy-loaded) |
-| UI | MUI v7 + Emotion, custom design system |
-| Charts | ECharts + D3.js |
+| UI | MUI v7 + Emotion · **`@adtech/ui`** design system · **`@adtech/theme`** ("Signal") |
+| Charts | ECharts (`@adtech/charts`) + D3 |
 | Forms | React Hook Form + Zod |
-| HTTP | Axios (interceptors, JWT auto-refresh) |
-| Testing | Vitest, Testing Library, Playwright, MSW |
+| HTTP | Axios (interceptors, JWT auto-refresh) + RTK Query `baseQueryWithReauth` |
+| Testing | Vitest · Testing Library · Playwright · MSW |
 
-## Getting Started
+## Getting started
+
+From the **repo root**: `pnpm dev:web` (or `pnpm dev` to also start the Go API).
+
+From **`apps/web/`** directly:
 
 ```bash
-# Install dependencies
-pnpm install
-
-# Start dev server (port 3000, proxies /api to Go backend :8080)
-pnpm dev
-
-# Type check
-pnpm lint
-
-# Build for production
-pnpm build
+pnpm dev          # dev server :3000 (proxies /api and /ws to the Go backend :8080)
+pnpm build        # production build
+pnpm type-check   # tsc --noEmit
+pnpm test         # Vitest
+pnpm test:e2e     # Playwright
 ```
 
-## Project Structure
+Needs the backend running for live data — see `apps/api/README.md`.
 
-```
-src/
-├── app/                          # App configuration
-│   ├── router.tsx                # Route definitions (lazy-loaded)
-│   ├── store.ts                  # Redux store setup
-│   ├── hooks.ts                  # Typed useAppDispatch / useAppSelector
-│   └── theme/                    # MUI theme (atomic files)
-│       ├── palette.ts
-│       ├── typography.ts
-│       ├── shadows.ts
-│       ├── components/           # Component overrides (25+ MUI components)
-│       └── index.ts
-├── components/
-│   ├── layout/                   # App layout (barrel index.ts)
-│   │   ├── navigation/           # Header, Sidebar
-│   │   └── wrappers/             # MainLayout, ProtectedRoute
-│   └── ui/                       # Design system (barrel index.ts)
-│       ├── data-display/         # DataTable, StatCard, StatusChip, ChartCard
-│       ├── feedback/             # ErrorBoundary, ErrorState, LoadingState, EmptyState, LazyPage, ToastContainer
-│       ├── form/                 # FormField, SelectField, SearchInput
-│       ├── layout/               # PageContainer, PageHeader
-│       ├── navigation/           # Pagination
-│       ├── overlay/              # ConfirmDialog
-│       └── typography/           # PageTitle, SectionTitle, TextMuted, Label, StatValue
-├── constants/                    # Centralized constants
-│   ├── routes.ts                 # Route paths
-│   ├── api.ts                    # API endpoints, timeout
-│   └── app.ts                    # App name, drawer width, status colors
-├── features/
-│   ├── auth/                     # authSlice + authApi (login, register, refresh)
-│   └── campaigns/                # campaignApi (CRUD + RTK Query cache)
-├── hooks/                        # useDocumentTitle, ...
-├── pages/                        # Route pages (lazy-loaded, organized by domain)
-│   ├── auth/                     # LoginPage, RegisterPage
-│   ├── dashboard/                # DashboardPage
-│   ├── campaigns/                # CampaignsPage
-│   │   └── children/             # CampaignNewPage, CampaignDetailPage
-│   └── errors/                   # NotFoundPage
-├── store/                        # Zustand stores (uiStore, toastStore)
-├── types/                        # Centralized TypeScript types (NO inline types)
-│   ├── domain/                   # user, auth, campaign, ad
-│   ├── api/                      # ApiResponse, PaginatedResponse, ApiError
-│   ├── store/                    # AuthState, UIState, Toast, ToastStore
-│   ├── component/                # All component props (by category)
-│   └── index.ts                  # Barrel re-export
-└── utils/                        # Shared utilities
-    ├── axios.ts                  # Axios instance (JWT interceptors)
-    ├── format.ts                 # formatCurrency, formatDate, getInitial
-    └── storage.ts                # localStorage abstraction
+## Shared packages consumed
+
+```ts
+import { createSignalTheme } from '@adtech/theme';           // MUI theme
+import { StatCard, DataTable, Tabs, Drawer, CommandPalette } from '@adtech/ui';
+import { PerformanceTrendChart } from '@adtech/charts';
+import type { Campaign, DashboardOverview } from '@adtech/types';
+import { useWebSocket, useDocumentTitle } from '@adtech/hooks';
+import { formatCurrency, storage } from '@adtech/utils';
 ```
 
-## Code Conventions
+These resolve to raw TS source (`node-linker=hoisted` + Rsbuild `source.include`), so edits in `packages/*` hot-reload here instantly — no rebuild.
 
-- **Import order**: hooks → UI components → Icons → helpers/constants → types
-- **No inline types**: All interfaces/types live in `src/types/`, organized by category
-- **Shared logic**: Helper functions in `src/utils/`, constants in `src/constants/`
-- **Component purity**: Components contain only UI + component-specific logic
-- **Page organization**: Grouped by domain; child pages go in `children/` folder
+## Project structure (app-local)
+
+```
+apps/web/src/
+├── app/                     # wiring
+│   ├── router.tsx           # routes (lazy-loaded)
+│   ├── store.ts             # Redux store + persist
+│   ├── api.ts               # RTK Query base + baseQueryWithReauth
+│   └── hooks.ts             # typed useAppDispatch / useAppSelector
+├── features/                # RTK slices + injected RTK Query APIs
+│   ├── auth/                # authSlice + authApi
+│   ├── campaigns/           # campaignApi (CRUD + cache tags)
+│   ├── metrics/             # metricsApi (dashboard + time-series)
+│   └── dashboard/           # dashboardSlice (selected campaign, persisted)
+├── pages/                   # route pages (lazy)
+│   ├── auth/                # LoginPage
+│   ├── dashboard/           # DashboardPage
+│   ├── campaigns/           # CampaignsPage (+ children/: New, Detail, Edit, Form)
+│   ├── styleguide/          # StyleguidePage — live @adtech/ui gallery
+│   └── errors/              # NotFoundPage
+├── components/layout/       # app chrome: Header, Sidebar, MainLayout, Protected/GuestRoute
+├── store/                   # Zustand: uiStore (sidebar)  (toast store lives in @adtech/ui)
+├── validation/              # Zod schemas (auth, campaign)
+├── constants/               # routes, api, app config
+├── utils/axios.ts           # Axios instance + JWT refresh queue
+├── lib/                     # third-party init
+└── index.tsx                # entry — imports self-hosted fonts + mounts <App/>
+```
+
+Everything presentational and reusable (buttons, cards, tables, charts, forms, overlays…) lives in the shared packages, not here.
+
+## State ownership
+
+- **Server cache** → RTK Query (`features/*Api`)
+- **Auth session** → `authSlice` (mirrored to `localStorage` for the axios/prepareHeaders layers)
+- **Cross-page selection** → `dashboardSlice` (only slice persisted via redux-persist)
+- **Ephemeral UI** → Zustand (`uiStore` sidebar; `toast` from `@adtech/ui`)
 
 ## Routes
 
-| Route | Page | Auth |
-|-------|------|------|
-| `/login` | LoginPage | Public |
-| `/register` | RegisterPage | Public |
+| Route | Page | Access |
+|---|---|---|
+| `/login` | LoginPage | Guest |
 | `/dashboard` | DashboardPage | Protected |
 | `/campaigns` | CampaignsPage | Protected |
 | `/campaigns/new` | CampaignNewPage | Protected |
 | `/campaigns/:id` | CampaignDetailPage | Protected |
-| `/admin/users` | AdminPage | Admin only |
+| `/campaigns/:id/edit` | CampaignEditPage | Protected |
+| `/styleguide` | StyleguidePage (component gallery) | Protected |
 | `*` | NotFoundPage | — |
 
-## Design System
+## Design system — "Signal"
 
-All reusable UI components live in `src/components/ui/` with a single barrel export:
+- **Theme** (`@adtech/theme`): `createSignalTheme('light'|'dark')` — cobalt `#2340D9` accent, warm neutrals, **Instrument Serif** display headings + **Geist** body + **Geist Mono**, self-hosted via `@fontsource` (imported in `src/index.tsx`).
+- **Components** (`@adtech/ui`): the full library, imported from one barrel — atoms → organisms + the extended set (Tabs, SegmentedControl, DropdownMenu, Drawer, CommandPalette, Combobox, TagInput, Slider, Dropzone, Accordion, Banner, NotificationCenter, meters, KpiDelta, GeoDistribution…). Browse them live at **`/styleguide`**, or in the standalone spec `design-system.html`.
 
-```tsx
-import { DataTable, PageHeader, StatCard, ErrorBoundary } from '@/components/ui';
-```
+## Conventions
 
-Theme is split into atomic files under `src/app/theme/` — palette, typography, shadows, and per-category component overrides.
-
-## Scripts
-
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start dev server |
-| `pnpm build` | Production build |
-| `pnpm preview` | Preview production build |
-| `pnpm lint` | TypeScript type check |
-| `pnpm test` | Run unit tests (Vitest) |
-| `pnpm test:ui` | Vitest UI |
-| `pnpm test:coverage` | Coverage report |
-| `pnpm test:e2e` | E2E tests (Playwright) |
+- **No inline prop types** — component props live in `@adtech/types` (`component/*`), re-exported through two barrels.
+- **Path alias** `@/*` → `apps/web/src/*` (app-local); shared code via `@adtech/*`.
+- `verbatimModuleSyntax` on → use `import type` for type-only imports.

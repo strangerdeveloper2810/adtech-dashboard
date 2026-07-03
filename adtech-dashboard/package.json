@@ -1,0 +1,14 @@
+{
+  "name": "adtech-monorepo",
+  "private": true,
+  "packageManager": "pnpm@10.30.3",
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
+    "seed": "turbo run seed",
+    "simulate": "turbo run simulate"
+  },
+  "devDependencies": { "turbo": "^2.5.0" }
+}

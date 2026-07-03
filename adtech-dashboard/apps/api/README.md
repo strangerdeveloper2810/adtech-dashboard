@@ -1,101 +1,112 @@
-# AdTech Dashboard — Backend
+# AdTech Dashboard — Backend (`@adtech/api`)
 
-Go REST API với Gin, PostgreSQL, Redis, xác thực JWT.
+Go REST API với Gin, PostgreSQL, Redis, JWT, worker pool + WebSocket real-time.
 
-Go REST API with Gin, PostgreSQL, Redis, JWT authentication.
+Go REST API with Gin, PostgreSQL, Redis, JWT auth, a goroutine worker pool and a WebSocket hub. Lives in the monorepo at `apps/api/`; Turborepo drives it via a thin `package.json` wrapper around the Go toolchain.
 
-## Yêu cầu / Prerequisites
+## Prerequisites
 
-- Go 1.22+
-- Docker Desktop (cho PostgreSQL + Redis)
-- [golang-migrate](https://github.com/golang-migrate/migrate) (`brew install golang-migrate`)
-- [sqlc](https://sqlc.dev/) (`brew install sqlc`) — tuỳ chọn, dùng để generate lại query code
+- Go 1.26+
+- Docker Desktop (PostgreSQL + Redis + MinIO)
+- [golang-migrate](https://github.com/golang-migrate/migrate) — `brew install golang-migrate`
 
-## Bắt đầu / Getting Started
+## Getting started
+
+From the **repo root** (recommended — via Turborepo/pnpm):
 
 ```bash
-# Khởi động PostgreSQL + Redis
-docker compose up -d
+cd apps/api && docker compose up -d && cd ../..   # Postgres + Redis + MinIO
+migrate -path apps/api/migrations \
+  -database "postgres://adtech:adtech123@localhost:5432/adtech?sslmode=disable" up
+pnpm seed        # seed users/campaigns/ads/events   (turbo → apps/api)
+pnpm dev:api     # run API only  → http://localhost:8080
+```
 
-# Chạy database migrations (tạo bảng)
+Or from **`apps/api/`** directly (Go toolchain / Makefile):
+
+```bash
+make docker-up      # or: docker compose up -d
 make migrate-up
-
-# Chạy dev server
-make dev
-# → http://localhost:8080
+go run ./cmd/seed   # or: make (see Makefile)
+make dev            # go run ./cmd/api  → http://localhost:8080
 ```
 
-## Cấu trúc dự án / Project Structure
+`package.json` scripts (invoked by turbo): `dev` = `go run ./cmd/api`, `build` = `go build -o bin/api ./cmd/api`, plus `seed`, `simulate`, `start`, `type-check` (`go build -o /dev/null ./...`), `lint` (`go vet`).
+
+## Project structure
 
 ```
-backend/
-├── cmd/api/main.go              # Entry point — wire dependencies
-├── config/config.go             # Load biến môi trường (.env)
-├── docker-compose.yml           # PostgreSQL 16 + Redis 7
-├── Makefile                     # Tất cả commands
-├── migrations/                  # SQL migration files (5 bảng)
-│
-└── internal/                    # Code private (Go compiler-enforced)
-    ├── server/                  # Gin engine + graceful shutdown
-    ├── handler/                 # HTTP handlers (tầng transport)
-    │   ├── auth_handler.go      # Đăng ký, Đăng nhập
-    │   ├── campaign_handler.go  # CRUD campaigns
-    │   ├── health_handler.go    # Health check
-    │   ├── response.go          # SuccessResponse, ErrorResponse helpers
-    │   └── middleware/          # Auth (JWT), CORS, RequestID, Logger
-    ├── service/                 # Logic nghiệp vụ
-    │   └── auth_service.go      # JWT + bcrypt
-    ├── repository/              # Interface truy cập dữ liệu
-    │   └── postgres/            # Implementation cho PostgreSQL
-    ├── domain/                  # Kiểu dữ liệu cốt lõi (User, Campaign, Ad, Event)
-    ├── dto/                     # Cấu trúc Request/Response
-    └── database/                # Kết nối DB + Redis
+apps/api/
+├── cmd/
+│   ├── api/main.go        # Entry point — wire deps, start server
+│   ├── seed/main.go       # DB seeder (5 users, campaigns, ads, ~95k events)
+│   ├── simulate/main.go   # Load generator → POSTs random ad events
+│   └── playground/        # Go learning sandbox (not part of the service)
+├── config/config.go       # Load env (.env via godotenv)
+├── docker-compose.yml     # PostgreSQL 16 + Redis 7 + MinIO
+├── Makefile               # dev / build / migrate / docker commands
+├── migrations/            # golang-migrate SQL (5 tables)
+└── internal/              # private app code (Go-enforced)
+    ├── server/            # Gin engine + routes + graceful shutdown
+    ├── handler/           # HTTP transport layer
+    │   └── middleware/    # CORS, RequestID, Logger, Auth(JWT), RequireRole(RBAC)
+    ├── service/           # business logic (auth_service.go: JWT + bcrypt)
+    ├── repository/        # data-access interfaces
+    │   └── postgres/      # PostgreSQL implementations (raw pgx SQL)
+    ├── worker/            # goroutine worker pool (event ingestion)
+    ├── websocket/         # gorilla/websocket hub (live fan-out)
+    ├── database/          # pgxpool + Redis connectors
+    ├── storage/           # MinIO/S3 object storage (ad creatives)
+    ├── domain/            # core structs (User, Campaign, Ad, AdEvent…)
+    └── dto/               # request/response structs (Gin binding tags)
 ```
 
-## Các lệnh Make / Make Commands
-
-```bash
-make help          # Hiển thị tất cả commands
-make dev           # Chạy API server
-make build         # Build binary → bin/api
-make test          # Chạy tất cả tests
-make docker-up     # Khởi động PostgreSQL + Redis
-make docker-down   # Dừng containers
-make docker-reset  # Dừng + xoá volumes (reset data)
-make migrate-up    # Chạy tất cả migrations
-make migrate-down  # Rollback migration cuối
-make sqlc          # Generate lại Go code từ SQL
-```
-
-## Biến môi trường / Environment Variables
-
-| Biến / Variable | Mặc định / Default | Mô tả / Description |
-|----------|---------|-------------|
-| `PORT` | `8080` | Port server |
-| `DATABASE_URL` | `postgres://adtech:adtech123@localhost:5432/adtech?sslmode=disable` | Kết nối PostgreSQL |
-| `REDIS_URL` | `localhost:6379` | Kết nối Redis |
-| `JWT_SECRET` | `dev-secret-key` | Khoá ký JWT (đổi khi deploy production) |
-
-## Lược đồ Database / Database Schema
-
-5 bảng với indexes / 5 tables with indexes:
-
-- **users** — email (unique), mật khẩu bcrypt, vai trò (admin/advertiser/viewer)
-- **campaigns** — ngân sách, ngân sách ngày, targeting (JSONB), trạng thái, khoảng ngày
-- **ads** — banner/native/video, URL đích
-- **ad_events** — impression/click/conversion, quốc gia, thiết bị, chi phí (khối lượng lớn)
-- **campaign_metrics** — thống kê gộp theo giờ (impressions, clicks, spend)
-
-## Kiến trúc tầng / Architecture Layers
+## Architecture
 
 ```
-Request → Middleware → Handler → Service → Repository → PostgreSQL
-                         ↓
-                    response.go (SuccessResponse / ErrorResponse)
+Request → Middleware → Handler → (Service) → Repository → PostgreSQL
 ```
 
-- **Handler**: Chỉ HTTP — parse request, gọi service, trả response
-- **Service**: Logic nghiệp vụ — auth, caching, validation
-- **Repository**: Truy cập dữ liệu — interface + PostgreSQL implementation
-- **Domain**: Struct cốt lõi, không phụ thuộc gì
-- **DTO**: Cấu trúc Request/Response, tách biệt khỏi domain
+- **Handler** — HTTP only: parse, call service/repo, return response
+- **Service** — business logic. NOTE: only **Auth** has a service layer; Campaign/Ad/Metrics handlers call repositories directly (pragmatic layering)
+- **Repository** — interface at the boundary + PostgreSQL implementation
+- **Domain / DTO** — core structs vs. request/response shapes
+- Dependencies are constructor-injected top-down in `cmd/api/main.go` (no DI framework)
+
+**Concurrency highlights:** worker pool with a buffered job channel + load-shedding (`worker/pool.go`); WebSocket hub fan-out with slow-client eviction (`websocket/hub.go`); graceful shutdown via `signal.Notify` + `http.Server.Shutdown` (`server/server.go`).
+
+## API (v1, prefix `/api/v1`)
+
+| Group | Endpoints |
+|---|---|
+| Auth (public) | `POST /auth/register` · `/auth/login` · `/auth/refresh` |
+| Campaigns | `GET /campaigns` · `GET /campaigns/:id` · `POST /campaigns` · `PUT /campaigns/:id` · `PATCH /campaigns/:id/status` · `DELETE /campaigns/:id` |
+| Ads | `POST /campaigns/:id/ads` · `GET /campaigns/:id/ads` · `GET|PATCH|DELETE /ads/:id` |
+| Metrics | `GET /dashboard/overview` · `GET /metrics` (time-series) |
+| Events | `POST /events/track` (→ worker pool) |
+| Users (admin) | `GET /users` · `GET /users/:id` · `PATCH /users/:id/role` |
+| Upload | `POST /upload` · `/upload/multiple` (MinIO) |
+| WebSocket | `GET /ws/metrics` (live counters) |
+
+## Environment variables
+
+| Variable | Default | Description |
+|---|---|---|
+| `PORT` | `8080` | server port |
+| `DATABASE_URL` | `postgres://adtech:adtech123@localhost:5432/adtech?sslmode=disable` | PostgreSQL DSN |
+| `REDIS_URL` | `localhost:6379` | Redis |
+| `JWT_SECRET` | `dev-secret-key` | JWT signing key (change in production) |
+| `MINIO_*` | see `config/config.go` | object storage |
+
+## Database schema (5 tables)
+
+- **users** — email (unique), bcrypt password, role (admin/advertiser/viewer), soft-delete
+- **campaigns** — budget / daily_budget / spent, `targeting` JSONB (GIN index), status, date range
+- **ads** — banner/native/video, destination URL, image
+- **ad_events** — impression/click/conversion, country, device, cost (high-volume, composite indexes)
+- **campaign_metrics** — pre-aggregated per campaign+period (impressions/clicks/conversions/spend)
+
+## Notes
+
+- **Queries are raw pgx SQL** hand-written in `repository/postgres/*_pg.go`. The `sqlc` target in the `Makefile` and empty `internal/database/{queries,sqlc}/` dirs are scaffolding only — **sqlc is not used**.
+- No tests yet (`test/testutil/` is empty) — a good first contribution.
